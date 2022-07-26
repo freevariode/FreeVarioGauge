@@ -326,7 +326,7 @@ void Sound(void *) {
     /////////////////////
     // calculate STF sound
     /////////////////////
-    else if (digitalRead(STF_MODE) == HIGH && ((sf > 0.5) || (sf < -0.5))) {
+    else if (digitalRead(STF_MODE) == HIGH && ((sf > 1) || (sf < -1))) {
       if ((count = 0) || (pulseTime > 1050)) {
         startTimePulse = millis();
         pulseTime = 0;
@@ -359,7 +359,7 @@ void Sound(void *) {
       count = 0;
     }
 
-    else if (digitalRead(STF_MODE) == HIGH && sf > -0.5 && sf < 0.5) {
+    else if (digitalRead(STF_MODE) == HIGH && sf > -1 && sf < 1) {
       gen.ApplySignal(SINE_WAVE, REG0, 0);
       delay(1);
     }
