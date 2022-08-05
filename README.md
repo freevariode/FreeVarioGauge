@@ -4,10 +4,15 @@ New in V1.2:
 
 – Both ESPs could be updated using WiFi (OTA)
 
+
 New in V1.1.5 (OpenVario image from FreeVario.de at least 22193 required):
+
 – Attenuation (ATT) adjustable in the menu between 0 and 3
+
 – Altitude and speed settings, as well as damping rate and mute settings are stored in the device
+
 – After the OpenVario crashes, the devices synchronize again
+
 
 IMPORTANT - PTT and mute function
 
