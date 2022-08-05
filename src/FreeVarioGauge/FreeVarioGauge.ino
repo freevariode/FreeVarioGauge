@@ -18,6 +18,12 @@
 //****  Screen and SPIFFS Headers and Defines ****
 //************************************************
 //#include<HardwareSerial.h>
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <WebServer.h>
+#include <EEPROM.h>
+#include <ESPmDNS.h>
+#include <Update.h>
 #include<SPI.h>
 #include<TFT_eSPI.h>
 #include <Preferences.h>
@@ -54,12 +60,28 @@ static TFT_eSPI tft = TFT_eSPI();
 TFT_eSprite nameOfField = TFT_eSprite(&tft);
 TFT_eSprite infoLarge = TFT_eSprite(&tft);
 TFT_eSprite infoSmall = TFT_eSprite(&tft);
+WebServer server(80);
 
 TaskHandle_t SerialScanTask, TaskEncoder, TaskValueRefresh, ArcRefreshTask;
 
 SemaphoreHandle_t xTFTSemaphore;
 
-const String SOFTWARE_VERSION = "  V1.1.5 - 2022";
+const long NOT_SET = -1;
+const long LONGPRESS_TIME = 500;
+long pushButtonPressTime = NOT_SET;
+
+const String SOFTWARE_VERSION = "  V1.2 - 2022";
+
+const char* host = "FreeVario_Displayboard";
+const char* ssid = "Default_SSID";
+const char* passphrase = "Default_Password";
+
+String st;
+String content;
+String displayMode = "Waiting ...";
+String soundMode = "Waiting ...";
+String displayIP = "";
+String soundIP = "";
 
 static String mod;
 static String mce;
@@ -114,17 +136,26 @@ static bool muteWasUpdated = true;
 static bool stfModeWasUpdate = true;
 static bool serial2Error = false;
 
+bool updatemode = false;
 bool showBootscreen = true;
 bool mci = false;
+bool testWifi(void);
+bool pushButtonIsLongpress = false;
+bool pushButtonPressed = false;
 
+int i = 0;
+int n = 0;
+int statusCode;
 int stf_mode_state;
-
 int spriteNameWidthSpeed, spriteValueWidthSpeed, spriteunitWidthSpeed;
 int spriteNameWidthHight, spriteValueWidthHight, spriteunitWidthHight;
 int spriteNameWidthSetting, spriteValueWidthSetting, spriteunitWidthSetting;
 int startAngle, segmentDraw, segmentCountOld, segmentCount;
+int Wificount = 0;
 int valueMuteAsInt = 1;
 int valueAttenAsInt = 2;
+int changeMode;
+int oldChangeMode;
 
 static int requestDrawMenu = 0;
 static int requestDrawMenuLevel = 0;
@@ -135,6 +166,94 @@ static unsigned long lastTimeBoot = 0;
 static unsigned long lastTimeReady = 0;
 static unsigned long lastTimeModeWasSend = 0;
 static unsigned long lastTimeSerial2 = 0;
+unsigned long loopTime = 5000;
+
+void launchWeb(void);
+void setupAP(void);
+
+//**********************
+//****  Login page  ****
+//**********************
+const char* loginIndex =
+  "<form name='loginForm'>"
+  "<table width='20%' bgcolor='A09F9F' align='center'>"
+  "<tr>"
+  "<td colspan=2>"
+  "<center><font size=4><b>Displayboard Login Page</b></font></center>"
+  "<br>"
+  "</td>"
+  "<br>"
+  "<br>"
+  "</tr>"
+  "<td>Username:</td>"
+  "<td><input type='text' size=25 name='userid'><br></td>"
+  "</tr>"
+  "<br>"
+  "<br>"
+  "<tr>"
+  "<td>Password:</td>"
+  "<td><input type='Password' size=25 name='pwd'><br></td>"
+  "<br>"
+  "<br>"
+  "</tr>"
+  "<tr>"
+  "<td><input type='submit' onclick='check(this.form)' value='Login'></td>"
+  "</tr>"
+  "</table>"
+  "</form>"
+  "<script>"
+  "function check(form)"
+  "{"
+  "if(form.userid.value=='Display' && form.pwd.value=='Display')"
+  "{"
+  "window.open('/serverIndex')"
+  "}"
+  "else"
+  "{"
+  " alert('Error Password or Username')/*displays error message*/"
+  "}"
+  "}"
+  "</script>";
+
+//*****************************
+//****  Server Index Page  ****
+//*****************************
+const char* serverIndex =
+  "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>"
+  "<form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>"
+  "<input type='file' name='update'>"
+  "<input type='submit' value='Update'>"
+  "</form>"
+  "<div id='prg'>progress: 0%</div>"
+  "<script>"
+  "$('form').submit(function(e){"
+  "e.preventDefault();"
+  "var form = $('#upload_form')[0];"
+  "var data = new FormData(form);"
+  " $.ajax({"
+  "url: '/update',"
+  "type: 'POST',"
+  "data: data,"
+  "contentType: false,"
+  "processData:false,"
+  "xhr: function() {"
+  "var xhr = new window.XMLHttpRequest();"
+  "xhr.upload.addEventListener('progress', function(evt) {"
+  "if (evt.lengthComputable) {"
+  "var per = evt.loaded / evt.total;"
+  "$('#prg').html('progress: ' + Math.round(per*100) + '%');"
+  "}"
+  "}, false);"
+  "return xhr;"
+  "},"
+  "success:function(d, s) {"
+  "console.log('success!')"
+  "},"
+  "error: function (a, b, c) {"
+  "}"
+  "});"
+  "});"
+  "</script>";
 
 void setup() {
   // Enable the weak pull down resistors
@@ -183,21 +302,222 @@ void setup() {
 }
 
 void loop() {
-
   if (showBootscreen) {
-    showBootScreen(SOFTWARE_VERSION, tft);
+    if (updatemode == true) {
+      pushButtonPressTime = millis();
+      if (Wificount == 0) {
+        updateScreen(tft);
+        Wificount = 1;
+        Serial.println();
+        Serial.println("Disconnecting current wifi connection");
+        WiFi.disconnect();
+        EEPROM.begin(512); //Initialasing EEPROM
+        delay(10);
+        pinMode(LED_BUILTIN, OUTPUT);
+        Serial.println();
+        Serial.println();
+        Serial.println("Startup");
+
+        //---------------------------------------- Read eeprom for ssid and pass
+        Serial.println("Reading EEPROM ssid");
+        String esid;
+        for (int i = 0; i < 32; ++i)
+        {
+          esid += char(EEPROM.read(i));
+        }
+        Serial.println();
+        Serial.print("SSID: ");
+        Serial.println(esid);
+        Serial.println("Reading EEPROM pass");
+        String epass = "";
+        for (int i = 32; i < 96; ++i)
+        {
+          epass += char(EEPROM.read(i));
+        }
+        Serial.print("PASS: ");
+        Serial.println(epass);
+        WiFi.begin(esid.c_str(), epass.c_str());
+        while (soundIP == "") {
+          char Data;
+          String DataString;
+          if (Serial2.available()) {
+            Serial.println("Test");
+            Data = Serial2.read();
+            if (Data == '$') {
+              while (Data != 10) {
+                DataString += Data;
+                Data = Serial2.read();
+              }
+              //Serial.println(DataString);
+            }
+            if (DataString.startsWith("$PFV")) {
+              //Serial2.println(DataString);
+              int pos = DataString.indexOf(',');
+              DataString.remove(0, pos + 1);
+              int pos1 = DataString.indexOf(',');                   //finds the place of the first,
+              String variable = DataString.substring(0, pos1);      //captures the first record
+              int pos2 = DataString.indexOf('*', pos1 + 1 );        //finds the place of *
+              String wert = DataString.substring(pos1 + 1, pos2);   //captures the second record
+
+              if (variable == "Connected") {
+                soundIP = wert;
+                Serial.print("SoundIP: ");
+                Serial.println(soundIP);
+                soundMode = "Connected";
+                Serial.print("SoundMode: ");
+                Serial.println(soundMode);
+              }
+
+              if (variable == "Access") {
+                soundIP = wert;
+                Serial.print("SoundIP: ");
+                Serial.println(soundIP);
+                soundMode = "Access Point Mode";
+                Serial.print("SoundMode: ");
+                Serial.println(soundMode);
+              }
+            }
+            DataString = "";
+            vTaskDelay(50);
+          }
+        }
+        if (testWifi())
+        {
+          Serial.println("Succesfully Connected!!!");
+          Serial.print("IP address: ");
+          Serial.println(WiFi.localIP());
+          displayMode = "Connected";
+          displayIP = WiFi.localIP().toString();
+          updateScreen(tft);
+          /*use mdns for host name resolution*/
+          if (!MDNS.begin(host)) { //http://esp32.local
+            Serial.println("Error setting up MDNS responder!");
+            while (1) {
+              delay(1000);
+            }
+          }
+          Serial.println("mDNS responder started");
+          /*return index page which is stored in serverIndex */
+          server.on("/", HTTP_GET, []() {
+            server.sendHeader("Connection", "close");
+            server.send(200, "text/html", loginIndex);
+          });
+          server.on("/serverIndex", HTTP_GET, []() {
+            server.sendHeader("Connection", "close");
+            server.send(200, "text/html", serverIndex);
+          });
+          /*handling uploading firmware file */
+          server.on("/update", HTTP_POST, []() {
+            server.sendHeader("Connection", "close");
+            server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+            ESP.restart();
+          }, []() {
+            HTTPUpload& upload = server.upload();
+            if (upload.status == UPLOAD_FILE_START) {
+              Serial.printf("Update: %s\n", upload.filename.c_str());
+              if (!Update.begin(UPDATE_SIZE_UNKNOWN)) { //start with max available size
+                Update.printError(Serial);
+              }
+            } else if (upload.status == UPLOAD_FILE_WRITE) {
+              /* flashing firmware to ESP*/
+              if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
+                Update.printError(Serial);
+              }
+            } else if (upload.status == UPLOAD_FILE_END) {
+              if (Update.end(true)) { //true to set the size to the current progress
+                Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
+              } else {
+                Update.printError(Serial);
+              }
+            }
+          });
+          server.begin();
+        }
+
+        else
+        {
+          Wificount = 1;
+          Serial.println("Turning the HotSpot On");
+          setupAP();// Setup HotSpot
+        }
+
+        while ((WiFi.status() != WL_CONNECTED))
+        {
+          server.handleClient();
+        }
+      }
+      server.handleClient();
+      delay(1);
+    }
+    else {
+      delay(1500);
+      showBootScreen(SOFTWARE_VERSION, tft);
+    }
   } else {
     ArcRefresh();
   }
 }
 
-void showBootScreen(String versionString, TFT_eSPI tftIN) {
+void updateScreen(TFT_eSPI tftIN) {
+  String modeMessage = "Update Mode";
+  tft.loadFont("micross20");
+  TFT_eSprite bootSprite = TFT_eSprite(&tftIN);
+  bootSprite.loadFont("micross20_boot");
+  bootSprite.createSprite(195, 25);
+  bootSprite.fillSprite(WHITE);
+  bootSprite.setCursor(0, 2);
+  bootSprite.setTextColor(GREY, BLACK);
+  tftIN.fillScreen(WHITE);
+  bootSprite.createSprite(195, 25);
+  bootSprite.fillSprite(WHITE);
+  bootSprite.setCursor(0, 2);
+  bootSprite.println(modeMessage);
+  bootSprite.pushSprite(85, 35);
+  bootSprite.deleteSprite();
+  bootSprite.createSprite(195, 25);
+  bootSprite.fillSprite(WHITE);
+  bootSprite.setCursor(0, 2);
+  bootSprite.println("Soundboard:");
+  bootSprite.pushSprite(35, 85);
+  bootSprite.deleteSprite();
+  bootSprite.createSprite(195, 25);
+  bootSprite.fillSprite(WHITE);
+  bootSprite.setCursor(0, 2);
+  bootSprite.println(soundMode);
+  bootSprite.pushSprite(35, 105);
+  bootSprite.deleteSprite();
+  bootSprite.createSprite(195, 25);
+  bootSprite.fillSprite(WHITE);
+  bootSprite.setCursor(0, 2);
+  bootSprite.println("IP: " + soundIP);
+  bootSprite.pushSprite(35, 125);
+  bootSprite.deleteSprite();
+  bootSprite.createSprite(195, 25);
+  bootSprite.fillSprite(WHITE);
+  bootSprite.setCursor(0, 2);
+  bootSprite.println("Displayboard:");
+  bootSprite.pushSprite(35, 175);
+  bootSprite.deleteSprite();
+  bootSprite.createSprite(195, 25);
+  bootSprite.fillSprite(WHITE);
+  bootSprite.setCursor(0, 2);
+  bootSprite.println(displayMode);
+  bootSprite.pushSprite(35, 195);
+  bootSprite.deleteSprite();
+  bootSprite.createSprite(195, 25);
+  bootSprite.fillSprite(WHITE);
+  bootSprite.setCursor(0, 2);
+  bootSprite.println("IP: " + displayIP);
+  bootSprite.pushSprite(35, 215);
+  bootSprite.deleteSprite();
+}
 
+void showBootScreen(String versionString, TFT_eSPI tftIN) {
   String waitingMessage = "Waiting for XCSoar ...";
   String dataString;
+  long showVersionTime = millis();
   int serial2IsReady = 0;
   tft.loadFont("micross20");
-
   TFT_eSprite bootSprite = TFT_eSprite(&tftIN);
   bootSprite.loadFont("micross20_boot");
   bootSprite.createSprite(195, 25);
@@ -211,41 +531,64 @@ void showBootScreen(String versionString, TFT_eSPI tftIN) {
   bootSprite.pushSprite(40, 245);
   bootSprite.deleteSprite();
   lastTimeBoot = millis();
-  vTaskDelay(4800);
-  bootSprite.createSprite(195, 25);
-  bootSprite.fillSprite(WHITE);
-  bootSprite.setCursor(0, 2);
-  bootSprite.println(waitingMessage);
-  bootSprite.pushSprite(40, 245);
-  bootSprite.deleteSprite();
+  changeMode = digitalRead(STF_MODE);
+  oldChangeMode = changeMode;
+  while (millis() - showVersionTime <= loopTime) {
+    changeMode = digitalRead(STF_MODE);
+    if (oldChangeMode != changeMode) {
+      updatemode = true;
+      loopTime = millis() + 500;
+      bootSprite.loadFont("micross20_boot");
+      bootSprite.createSprite(195, 25);
+      bootSprite.fillSprite(WHITE);
+      bootSprite.setCursor(0, 2);
+      bootSprite.setTextColor(GREY, BLACK);
+      tftIN.fillScreen(WHITE);
+      tftIN.setWindow(40, 55, 40 + 193, 55 + 155);
+      tftIN.pushColors(logoOV, 194 * 156);
+      bootSprite.println("starting Update Mode");
+      bootSprite.pushSprite(40, 245);
+      bootSprite.deleteSprite();
+    }
+    oldChangeMode = changeMode;
+  }
+  if (updatemode == false) {
+    bootSprite.createSprite(195, 25);
+    bootSprite.fillSprite(WHITE);
+    bootSprite.setCursor(0, 2);
+    bootSprite.println(waitingMessage);
+    bootSprite.pushSprite(40, 245);
+    bootSprite.deleteSprite();
 
-  //Waiting until XCSoar delivers correct values
-  do {
-    if (Serial2.available()) {
-      char serialString = Serial2.read();
-      if (serialString == '$') {
-        while (serialString != 10) {
-          dataString += serialString;
-          serialString = Serial2.read();
+    //Waiting until XCSoar delivers correct values
+    do {
+      if (Serial2.available()) {
+        char serialString = Serial2.read();
+        if (serialString == '$') {
+          while (serialString != 10) {
+            dataString += serialString;
+            serialString = Serial2.read();
+          }
+        }
+        if (dataString.startsWith("$PFV")) {
+          serial2IsReady = 1;
+          dataString = "";
         }
       }
-      if (dataString.startsWith("$PFV")) {
-        serial2IsReady = 1;
-        dataString = "";
-      }
-    }
-  } while (serial2IsReady == 0);
-  bootSprite.unloadFont();
-  tftIN.fillScreen(BLACK);
-  lastTimeReady = millis();
-  showBootscreen = false;
+    } while (serial2IsReady == 0);
+    bootSprite.unloadFont();
+    tftIN.fillScreen(BLACK);
+    lastTimeReady = millis();
+    showBootscreen = false;
+  }
 }
 
 void EncoderReader(void *p) {
   const int DEBOUNCE_DELAY = 80;
-  const long LONGPRESS_TIME = 500;
   const long TIME_SINCE_BOOT = 5000;
-  const long NOT_SET = -1;
+
+  pushButtonPressTime = NOT_SET;
+  pushButtonIsLongpress = false;
 
   const int MENU_SPEED_TYP = 1;
   const int MENU_HIGHT_TYP = 2;
@@ -256,12 +599,9 @@ void EncoderReader(void *p) {
   const int MENU_VALUE_MUTE = 3;
 
   float encoderPosition = (float) - 999;
-
-  long pushButtonPressTime = NOT_SET;
   float menuActiveSince = 0;                  // Will be updated in menu run
 
-  bool pushButtonPressed = false;
-  bool pushButtonIsLongpress = false;
+  pushButtonPressed = false;
   bool menuWasTriggered = false;
   bool subMenuTriggered = false;
   bool subMenuLevelTwoTriggered = false;
@@ -1379,4 +1719,154 @@ void SPIFFSstart() {
     while (1) yield(); // Stay here twiddling thumbs waiting
   }
   Serial.println("\r\nInitialisation done.");
+}
+
+// **********************************
+// ****  Fuctions used for WiFi  ****
+// **********************************
+bool testWifi(void)
+{
+  int c = 0;
+  Serial.println("Waiting for Wifi to connect");
+  while ( c < 20 ) {
+    if (WiFi.status() == WL_CONNECTED)
+    {
+      return true;
+    }
+    delay(500);
+    Serial.print("*");
+    c++;
+  }
+  Serial.println("");
+  Serial.println("Connect timed out, opening AP");
+  return false;
+}
+void launchWeb()
+{
+  Serial.println("");
+  if (WiFi.status() == WL_CONNECTED)
+    Serial.println("WiFi connected");
+  Serial.print("Local IP: ");
+  Serial.println(WiFi.localIP());
+  Serial.print("SoftAP IP: ");
+  Serial.println(WiFi.softAPIP());
+  createWebServer();
+  // Start the server
+  server.begin();
+  Serial.println("Server started");
+}
+void setupAP(void)
+{
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
+  delay(100);
+  n = WiFi.scanNetworks();
+  Serial.println("scan done");
+  if (n == 0)
+    Serial.println("no networks found");
+  else
+  {
+    Serial.print(n);
+    Serial.println(" networks found");
+    for (int i = 0; i < n; ++i)
+    {
+      // Print SSID and RSSI for each network found
+      Serial.print(i + 1);
+      Serial.print(": ");
+      Serial.print(WiFi.SSID(i));
+      Serial.print(" (");
+      Serial.print(WiFi.RSSI(i));
+      Serial.println(")");
+      delay(10);
+    }
+  }
+  Serial.println("");
+  st = "<ol>";
+  for (int i = 0; i < n; ++i)
+  {
+    // Print SSID and RSSI for each network found
+    st += "<li>";
+    st += WiFi.SSID(i);
+    st += " (";
+    st += WiFi.RSSI(i);
+    st += ")";
+    st += "</li>";
+  }
+  st += "</ol>";
+  delay(100);
+  WiFi.softAP("FreeVario_Displayboard", "");
+  delay(100);
+  IPAddress Ip(192, 168, 2, 1);    //setto IP Access Point same as gateway
+  IPAddress NMask(255, 255, 255, 0);
+  WiFi.softAPConfig(Ip, Ip, NMask);
+  IPAddress myIP = WiFi.softAPIP();
+  displayMode = "Access Point Mode";
+  displayIP = WiFi.softAPIP().toString();
+  Serial.println("Initializing_softap_for_wifi credentials_modification");
+  launchWeb();
+  updateScreen(tft);
+  Serial.println("over");
+}
+void createWebServer(void)
+{
+  {
+    server.on("/", []() {
+      IPAddress ip = WiFi.softAPIP();
+      String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
+      content = "<!DOCTYPE HTML>\r\n<html>Welcome to Wifi Credentials Update page for the Displayboard of your FreeVario";
+      content += "<form action=\"/scan\" method=\"POST\"><input type=\"submit\" value=\"scan\"></form>";
+      content += ipStr;
+      content += "<p>";
+      content += st;
+      content += "In the fields below, please enter the SSID and password of the wireless network you want to use.";
+      content += "</p><form method='get' action='setting'><label>SSID: </label><input name='ssid' length=32><input name='pass' length=64><input type='submit'></form>";
+      content += "</html>";
+      server.send(200, "text/html", content);
+    });
+    server.on("/scan", []() {
+      //setupAP();
+      IPAddress ip = WiFi.softAPIP();
+      String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
+      content = "<!DOCTYPE HTML>\r\n<html>go back";
+      server.send(200, "text/html", content);
+    });
+    server.on("/setting", []() {
+      String qsid = server.arg("ssid");
+      String qpass = server.arg("pass");
+      if (qsid.length() > 0 && qpass.length() > 0) {
+        Serial.println("clearing eeprom");
+        for (int i = 0; i < 96; ++i) {
+          EEPROM.write(i, 0);
+        }
+        Serial.println(qsid);
+        Serial.println("");
+        Serial.println(qpass);
+        Serial.println("");
+        Serial.println("writing eeprom ssid:");
+        for (int i = 0; i < qsid.length(); ++i)
+        {
+          EEPROM.write(i, qsid[i]);
+          Serial.print("Wrote: ");
+          Serial.println(qsid[i]);
+        }
+        Serial.println("writing eeprom pass:");
+        for (int i = 0; i < qpass.length(); ++i)
+        {
+          EEPROM.write(32 + i, qpass[i]);
+          Serial.print("Wrote: ");
+          Serial.println(qpass[i]);
+        }
+        EEPROM.commit();
+        content = "{\"Success\":\"saved to eeprom... reset to boot into new wifi\"}";
+        statusCode = 200;
+        ESP.restart();
+      } else {
+        content = "{\"Error\":\"404 not found\"}";
+        statusCode = 404;
+        Serial.println("Sending 404");
+      }
+      server.sendHeader("Access-Control-Allow-Origin", "*");
+      server.send(statusCode, "application/json", content);
+    });
+  }
 }
