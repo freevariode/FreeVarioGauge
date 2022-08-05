@@ -1,6 +1,7 @@
 # FreeVarioGauge
 
 New in V1.2:
+
 – Both ESPs could be updated using WiFi (OTA)
 
 New in V1.1.5 (OpenVario image from FreeVario.de at least 22193 required):
