@@ -1,5 +1,13 @@
 # FreeVarioGauge
 
+New in V1.2:
+– Both ESPs could be updated using WiFi (OTA)
+
+New in V1.1.5 (OpenVario image from FreeVario.de at least 22193 required):
+– Attenuation (ATT) adjustable in the menu between 0 and 3
+– Altitude and speed settings, as well as damping rate and mute settings are stored in the device
+– After the OpenVario crashes, the devices synchronize again
+
 IMPORTANT - PTT and mute function
 
 If you want to use the FreeVario's mute function, you need to have at least the FreeVario image from 20295 installed on your OpenVario. In addition, at least firmware V.1.1.1 must be installed on the sound board as well as on the display board. If you are using the sound board with the 3-pin connector on the back, but without the diode D1, a small change has to be made here. Please write me about this by email (dirk@freevario.de).
