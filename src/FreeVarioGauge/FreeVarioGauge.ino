@@ -220,6 +220,7 @@ const char* loginIndex =
 //*****************************
 const char* serverIndex =
   "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>"
+  "<center><font size=4><b>Displayboard Update Page</b></font></center>"
   "<form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>"
   "<input type='file' name='update'>"
   "<input type='submit' value='Update'>"
