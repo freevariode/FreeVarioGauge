@@ -57,8 +57,8 @@ int statusCode;
 int Wificount = 0;
 int changeMode = 0;
 
-byte RXD2;
-byte TXD2;
+byte RXD2 = 16;
+byte TXD2 = -1;                       // -1 means it not used beacause of trouble with Dispolay-ESP32. Set TXD2 to 17 if you like to use
 
 bool error = false;
 bool updatemode = false;
@@ -247,6 +247,7 @@ float filter(float filteredSTF, uint16_t filterfactor) {
 
 void setup() {
   Serial.begin(115200, SERIAL_8N1);
+  Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
   gen.Begin();
   gen.ApplySignal(SINE_WAVE, REG0, freqValueOld);
   gen.EnableOutput(true);             // Turn ON the output - it defaults to OFF
@@ -303,6 +304,7 @@ void loop() {
       while (millis() - toneTime <= 200) {
         gen.ApplySignal(SINE_WAVE, REG0, 1000);
       }
+      Serial2.end();
       RXD2 = 17;
       TXD2 = 16;
       Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
@@ -420,9 +422,6 @@ void loop() {
   // read serial port
   /////////////////////
   if (updatemode == false) {
-    RXD2 = 16;
-    TXD2 = -1;                       // -1 means it not used beacause of trouble with Dispolay-ESP32. Set TXD2 to 17 if you like to use
-    Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
     char Data;
     String DataString;
     if (Serial2.available()) {
