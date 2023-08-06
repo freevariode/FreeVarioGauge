@@ -17,7 +17,6 @@
 //************************************************
 //****  Screen and SPIFFS Headers and Defines ****
 //************************************************
-//#include<HardwareSerial.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
@@ -34,7 +33,7 @@ Preferences prefs;
 #include "SPIFFS.h"
 #include <ESP32Encoder.h>
 
-SP32Encoder Vario_Enc;
+ESP32Encoder Vario_Enc;
 
 #define BLACK   0x0000
 #define RED     0x001F
@@ -255,7 +254,7 @@ const char* serverIndex =
 
 void setup() {
   // Enable the weak pull down resistors
-  ESP32Encoder::useInternalWeakPullResistors = true;
+  ESP32Encoder::useInternalWeakPullResistors = DOWN;
 
   if ( xTFTSemaphore == NULL )
   { xTFTSemaphore = xSemaphoreCreateMutex();
@@ -267,18 +266,13 @@ void setup() {
   tft.setRotation(0);
 
   // set starting count value
-  Vario_Enc.setCount(16380);
   Vario_Enc.attachHalfQuad(23, 32);
+  Vario_Enc.setCount(16380);
   pinMode(VE_PB, INPUT_PULLUP);
 
   // Note the format for setting a serial port is as follows: Serial2.begin(baud-rate, protocol, RX pin, TX pin);
   Serial.begin(115200, SERIAL_8N1);
   Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
-  WiFi.softAP(ssid, password);
-  delay(100);
-  IPAddress Ip(192, 168, 2, 1);    //setto IP Access Point same as gateway
-  IPAddress NMask(255, 255, 255, 0);
-  WiFi.softAPConfig(Ip, Ip, NMask);
   SPIFFSstart();
 
   xTaskCreate(SerialScan, "Serial Scan", 5000, NULL, 50, &SerialScanTask);
@@ -311,6 +305,11 @@ void loop() {
       if (Wificount == 0) {
         updateScreen(tft);
         Wificount = 1;
+        WiFi.softAP(ssid, password);
+        delay(100);
+        IPAddress Ip(192, 168, 2, 1);    //setto IP Access Point same as gateway
+        IPAddress NMask(255, 255, 255, 0);
+        WiFi.softAPConfig(Ip, Ip, NMask);
         IPAddress myIP = WiFi.softAPIP();
         displayIP = myIP.toString();
         if (displayIP != "") {
@@ -529,6 +528,7 @@ void showBootScreen(String versionString, TFT_eSPI tftIN) {
     oldChangeMode = changeMode;
   }
   if (updatemode == false) {
+    WiFi.mode(WIFI_OFF);
     bootSprite.createSprite(195, 25);
     bootSprite.fillSprite(WHITE);
     bootSprite.setCursor(0, 2);
@@ -551,7 +551,7 @@ void showBootScreen(String versionString, TFT_eSPI tftIN) {
           dataString = "";
         }
       }
-    } while (serial2IsReady == 1);
+    } while (serial2IsReady == 0); //0 = waiting for XCSoar, 1 = start without waiting
     bootSprite.unloadFont();
     tftIN.fillScreen(BLACK);
     lastTimeReady = millis();
@@ -983,7 +983,6 @@ void ArcRefresh() {
   while (showBootscreen) {
     vTaskDelay(1000);
   }
-
   if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
   {
     float angle = (var * 22) + 180;
@@ -1467,10 +1466,10 @@ int calculateChecksum(String mce) {
 //*********************************
 //****  Deg to Rad conversion  ****
 //*********************************
-float deg2rad(float * angle) {
+float deg2rad(float *angle) {
   //  float tempangle=*angle;
-  * angle = * angle / 180 * 3.141516;
-  //  return angle;
+  *angle = *angle / 180 * 3.141516;
+  return *angle;
 }
 
 //****************************
@@ -1489,7 +1488,7 @@ double sf;                                      //Speedfaktor zur Berechnung des
 float B, B_alt;
 float MiddleRadius = ((OuterRadius - InnerRadius) / 2) + InnerRadius; //Middle of Sliding Circle radius
 
-int fillArc(int x, int y, int start_angle, int seg_count, int rx, int ry, int w, unsigned int color)
+void fillArc(int x, int y, int start_angle, int seg_count, int rx, int ry, int w, unsigned int color)
 {
   stf_mode_state = digitalRead(STF_MODE);
   byte seg = 3; // Segments are 3 degrees wide = 120 segments for 360 degrees
@@ -1512,9 +1511,9 @@ int fillArc(int x, int y, int start_angle, int seg_count, int rx, int ry, int w,
     y0 = 320 - (sy * (ry - w) + y);
     y1 = 320 - (sy * ry + y);
   }
-  // Draw color blocks every inc degrees
-  for (int i = start_angle; i < start_angle + seg * seg_count; i += inc) {
 
+  // Draw color blocks every inc degrees
+  for (int i = start_angle; i < (start_angle + seg * seg_count); i += inc) {
     // Calculate pair of coordinates for segment end
     uint16_t y2;
     uint16_t y3;
@@ -1540,10 +1539,10 @@ int fillArc(int x, int y, int start_angle, int seg_count, int rx, int ry, int w,
     y1 = y3;
   }
 }
+
 void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpeed) {
   stf_mode_state = digitalRead(STF_MODE);
   unsigned int color;
-
 
   //*********************************
   //****  Vario Mode Colored Arc ****
@@ -1592,6 +1591,7 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
     startAngle = 270 + 3 * segmentCountOld;
     //startAngle = 270;
     segmentDraw = segmentCount - segmentCountOld;
+
     color = GREEN;
     segmentCountOld = segmentCount;
   }

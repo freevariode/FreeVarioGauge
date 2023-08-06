@@ -247,7 +247,7 @@ void setup() {
   Serial.begin(115200, SERIAL_8N1);
   Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
   gen.Begin();
-  gen.ApplySignal(SINE_WAVE, REG0, freqValueOld);
+  gen.ApplySignal(SINE_WAVE, REG0, 0);
   gen.EnableOutput(true);             // Turn ON the output - it defaults to OFF
   AD9833 gen(FNC_PIN);                // Defaults to 25MHz internal reference frequency
   pinMode(STF_MODE, OUTPUT);
@@ -256,12 +256,6 @@ void setup() {
   pinMode(Varioschalter, INPUT_PULLUP);
   pinMode(STFSchalter, INPUT_PULLUP);
   pinMode(STFAuto, INPUT_PULLUP);
-  WiFi.softAP(ssid, password);
-  delay(100);
-  IPAddress Ip(192, 168, 3, 1);    //setto IP Access Point same as gateway
-  IPAddress NMask(255, 255, 255, 0);
-  WiFi.softAPConfig(Ip, Ip, NMask);
-  server.begin();
   xTaskCreate(Sound, "Create Sound", 1000, NULL, 50, &SoundTask);
 }
 
@@ -320,14 +314,21 @@ void loop() {
       while (millis() - toneTime <= 200) {
         gen.ApplySignal(SINE_WAVE, REG0, 1000);
       }
+      gen.ApplySignal(SINE_WAVE, REG0, 0);
     }
   }
 
   if (updatemode == true) {
     if (Wificount == 0) {
       Wificount = 1;
-      IPAddress myIP = WiFi.softAPIP();
       Serial2.end();
+      WiFi.softAP(ssid, password);
+      delay(100);
+      IPAddress Ip(192, 168, 3, 1);    //setto IP Access Point same as gateway
+      IPAddress NMask(255, 255, 255, 0);
+      WiFi.softAPConfig(Ip, Ip, NMask);
+      IPAddress myIP = WiFi.softAPIP();
+      server.begin();
       soundIP = myIP.toString();
       if (soundIP != "") {
         soundMode = "Ready";
@@ -342,12 +343,10 @@ void loop() {
       delay(10);
       pinMode(LED_BUILTIN, OUTPUT);
       Serial.println();
-      Serial.println();
-      Serial.println("Startup");
+      Serial.println("Startup Update Mode");
       connectTime = millis();
       while (millis() - connectTime <= 10000) {
         Serial2.println("$PFV," + soundMode + "," + soundIP + "*");
-        Serial.println("$PFV," + soundMode + "," + soundIP + "*");
         delay(500);
       }
       /*use mdns for host name resolution*/
@@ -402,7 +401,7 @@ void loop() {
   // read serial port
   /////////////////////
   if (updatemode == false) {
-    //WiFi.mode(WIFI_OFF);
+    WiFi.mode(WIFI_OFF);
     char Data;
     String DataString;
     if (Serial2.available()) {
