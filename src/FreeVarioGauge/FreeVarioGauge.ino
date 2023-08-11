@@ -17,6 +17,7 @@
 //************************************************
 //****  Screen and SPIFFS Headers and Defines ****
 //************************************************
+#include <Streaming.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
@@ -65,6 +66,7 @@ TFT_eSprite infoLarge = TFT_eSprite(&tft);
 TFT_eSprite infoSmall = TFT_eSprite(&tft);
 WebServer server(80);
 
+Print &cout = Serial;
 TaskHandle_t SerialScanTask, TaskEncoder, TaskValueRefresh, ArcRefreshTask;
 
 SemaphoreHandle_t xTFTSemaphore;
@@ -172,6 +174,10 @@ static unsigned long lastTimeSerial2 = 0;
 unsigned long loopTime = 5000;
 
 void setup() {
+  cout << F("Start: ") << F(__FILE__) << endl;
+  updateHTML.replace("%%SoftwareVersion%%", SOFTWARE_VERSION);
+  cout << updateHTML << endl;
+
   // Enable the weak pull down resistors
   ESP32Encoder::useInternalWeakPullResistors = DOWN;
 
@@ -323,7 +329,8 @@ void loop() {
         /*handling uploading firmware file */
         server.on("/update", HTTP_POST, []() {
           server.sendHeader("Connection", "close");
-          server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+          server.send((Update.hasError()) ? 422 : 200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+          delay(1000);
           ESP.restart();
         }, []() {
           HTTPUpload& upload = server.upload();
@@ -1250,10 +1257,20 @@ void SerialScan (void *p) {
       //
       else if (variable == "STF") {
         stfValue = wert.toFloat();
-        int FF = (valueAttenAsInt * 10) + 1;
-        stf = filter(stfValue, FF);
+        if (stf_mode_state == 1) {
+          int FF = (valueAttenAsInt * 10) + 1;
+          stf = filter(stfValue, FF);
+        }
+        else {
+          stf = valueTasAsFloat;
+        }
+        Serial.println("STF");
+        Serial.print ("unfiltered: ");
+        Serial.println(stfValue);
+        Serial.print ("filtered: ");
+        Serial.println(stf);
       }
-
+      
       //
       //analyse true airspeed
       //
@@ -1417,7 +1434,6 @@ float MiddleRadius = ((OuterRadius - InnerRadius) / 2) + InnerRadius; //Middle o
 
 void fillArc(int x, int y, int start_angle, int seg_count, int rx, int ry, int w, unsigned int color)
 {
-  stf_mode_state = digitalRead(STF_MODE);
   byte seg = 3; // Segments are 3 degrees wide = 120 segments for 360 degrees
   byte inc = 3; // Draw segments every 3 degrees, increase to 6 for segmented ring
 

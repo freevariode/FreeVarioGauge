@@ -20,6 +20,7 @@
 #define PTT 27                        // VarioSound off by pressing the radio button; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
 #define FNC_PIN 4                     // Can be any digital IO pin                    
 
+#include <Streaming.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
@@ -34,11 +35,14 @@
 AD9833 gen(FNC_PIN);                  // Defaults to 25MHz internal reference frequency
 WebServer server(80);
 
+Print &cout = Serial;
 TaskHandle_t SoundTask;
 
 const int Varioschalter = 15;         // Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
 const int STFSchalter = 5;            // Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
 const int STFAuto = 19;               // Flap connection; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin´
+
+const String SOFTWARE_VERSION = "  V1.2.1 - 2023";
 
 const char *host = "FreeVario_Soundboard";
 const char *ssid = "FV_Soundboard";
@@ -80,6 +84,7 @@ float freqValueOld = 350;
 float freqValueNeg = 0;
 float freqValueInc = 0 ;
 float errorFreq = 1000;
+float valueTasAsFloat = 0;
 static float stf = 0.0;
 
 long pulseStarts = 0;
@@ -163,6 +168,10 @@ float filter(float filteredSTF, uint16_t filterfactor) {
 }
 
 void setup() {
+  cout << F("Start: ") << F(__FILE__) << endl;
+  updateHTML.replace("%%SoftwareVersion%%", SOFTWARE_VERSION);
+  cout << updateHTML << endl;
+
   Serial.begin(115200, SERIAL_8N1);
   Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
   gen.Begin();
@@ -296,7 +305,8 @@ void loop() {
       /*handling uploading firmware file */
       server.on("/update", HTTP_POST, []() {
         server.sendHeader("Connection", "close");
-        server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+        server.send((Update.hasError()) ? 422 : 200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+        delay(1000);
         ESP.restart();
       }, []() {
         HTTPUpload& upload = server.upload();
@@ -385,11 +395,16 @@ void loop() {
         /////////////////////
         if (variable == "STF") {
           stfValue = wert.toFloat();
-          int FF = (valueAttenAsInt * 10) + 1;
-          stf = filter(stfValue, FF);
+          if (digitalRead(STF_MODE) == 1) {
+            int FF = (valueAttenAsInt * 10) + 1;
+            stf = filter(stfValue, FF);
+          }
+          else {
+            stf = tas;
+          }
         }
 
-
+        
         /////////////////////
         // Analysis Mute
         /////////////////////
