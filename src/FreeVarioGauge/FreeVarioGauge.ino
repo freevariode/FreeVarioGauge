@@ -144,7 +144,6 @@ static bool serial2Error = false;
 bool updatemode = false;
 bool showBootscreen = true;
 bool mci = false;
-bool testWifi(void);
 bool pushButtonIsLongpress = false;
 bool pushButtonPressed = false;
 
