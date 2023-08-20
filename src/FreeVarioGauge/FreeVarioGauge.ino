@@ -1256,7 +1256,7 @@ void SerialScan (void *p) {
       //
       else if (variable == "STF") {
         stfValue = wert.toFloat();
-        if (stf_mode_state == 1) {
+        if (stf_mode_state == 1 && valueTasAsFloat > 10) {
           int FF = (valueAttenAsInt * 10) + 1;
           stf = filter(stfValue, FF);
         }
