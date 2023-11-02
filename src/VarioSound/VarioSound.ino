@@ -20,6 +20,8 @@
 #define PTT 27                        // VarioSound off by pressing the radio button; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
 #define FNC_PIN 4                     // Can be any digital IO pin                    
 
+#include "FS.h"
+#include "SPIFFS.h"
 #include <Streaming.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
@@ -27,10 +29,6 @@
 #include <EEPROM.h>
 #include <ESPmDNS.h>
 #include <Update.h>
-#include <sound-login.html.h>
-#include <sound-update.html.h>
-#include <script.js.h>
-#include <style.css.h>
 #include <AD9833.h>                   // Include the library
 AD9833 gen(FNC_PIN);                  // Defaults to 25MHz internal reference frequency
 WebServer server(80);
@@ -42,7 +40,7 @@ const int Varioschalter = 15;         // Connect button to GND, connect 10 kOhm 
 const int STFSchalter = 5;            // Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
 const int STFAuto = 19;               // Flap connection; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin´
 
-const String SOFTWARE_VERSION = "  V1.2.1 - 2023";
+const String SOFTWARE_VERSION = "  V1.2.2 - 2023";
 
 const char *host = "FreeVario_Soundboard";
 const char *ssid = "FV_Soundboard";
@@ -168,9 +166,9 @@ float filter(float filteredSTF, uint16_t filterfactor) {
 }
 
 void setup() {
-  cout << F("Start: ") << F(__FILE__) << endl;
-  updateHTML.replace("%%SoftwareVersion%%", SOFTWARE_VERSION);
-  cout << updateHTML << endl;
+  server.on("/SoftwareVersion", []() {
+    server.send(200, "application/json",  "\"" + SOFTWARE_VERSION + "\"");
+  });
 
   Serial.begin(115200, SERIAL_8N1);
   Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
@@ -185,6 +183,13 @@ void setup() {
   pinMode(STFSchalter, INPUT_PULLUP);
   pinMode(STFAuto, INPUT_PULLUP);
   xTaskCreate(Sound, "Create Sound", 1000, NULL, 50, &SoundTask);
+  SPIFFSstart();
+  server.serveStatic("/B612-Bold.ttf", SPIFFS, "/B612-Bold.ttf");
+  server.serveStatic("/B612-Regular.ttf", SPIFFS, "/B612-Regular.ttf");
+  server.serveStatic("/style.css", SPIFFS, "/style.css");
+  server.serveStatic("/script.js", SPIFFS, "/script.js");
+  server.serveStatic("/serverIndex", SPIFFS, "/sound-update.html");
+  server.serveStatic("/", SPIFFS, "/sound-login.html");
 }
 
 void loop() {
@@ -288,19 +293,19 @@ void loop() {
       /*return index page which is stored in serverIndex */
       server.on("/", HTTP_GET, []() {
         server.sendHeader("Connection", "close");
-        server.send(200, "text/html", loginHTML);
+        server.send(200, "text/html", "/sound-login.html");
       });
       server.on("/serverIndex", HTTP_GET, []() {
         server.sendHeader("Connection", "close");
-        server.send(200, "text/html", updateHTML);
+        server.send(200, "text/html", "/sound-update.html");
       });
       server.on("/style.css", HTTP_GET, []() {
         server.sendHeader("Connection", "close");
-        server.send(200, "text/css", serverCSS);
+        server.send(200, "text/css", "/style.css");
       });
       server.on("/script.js", HTTP_GET, []() {
         server.sendHeader("Connection", "close");
-        server.send(200, "text/js", serverJS);
+        server.send(200, "text/js", "/script.js");
       });
       /*handling uploading firmware file */
       server.on("/update", HTTP_POST, []() {
@@ -404,7 +409,7 @@ void loop() {
           }
         }
 
-        
+
         /////////////////////
         // Analysis Mute
         /////////////////////
@@ -528,4 +533,15 @@ void Sound(void *) {
   varOld = var;
   sfOld = sf;
   vTaskDelay(10);
+}
+
+// ************************************
+// ****  Initialize SPIFFS memory  ****
+// ************************************
+void SPIFFSstart() {
+  if (!SPIFFS.begin()) {
+    Serial.println("SPIFFS initialisation failed!");
+    while (1) yield(); // Stay here twiddling thumbs waiting
+  }
+  Serial.println("\r\nInitialisation done.");
 }

@@ -24,12 +24,8 @@
 #include <EEPROM.h>
 #include <ESPmDNS.h>
 #include <Update.h>
-#include <display-login.html.h>
-#include <display-update.html.h>
-#include <script.js.h>
-#include <style.css.h>
-#include<SPI.h>
-#include<TFT_eSPI.h>
+#include <SPI.h>
+#include <TFT_eSPI.h>
 #include <Preferences.h>
 Preferences prefs;
 
@@ -75,7 +71,7 @@ const long NOT_SET = -1;
 const long LONGPRESS_TIME = 500;
 long pushButtonPressTime = NOT_SET;
 
-const String SOFTWARE_VERSION = "  V1.2.1 - 2023";
+const String SOFTWARE_VERSION = "  V1.2.2 - 2023";
 
 const char *host = "FreeVario_Displayboard";
 const char *ssid = "FV_Displayboard";
@@ -173,9 +169,9 @@ static unsigned long lastTimeSerial2 = 0;
 unsigned long loopTime = 5000;
 
 void setup() {
-  cout << F("Start: ") << F(__FILE__) << endl;
-  updateHTML.replace("%%SoftwareVersion%%", SOFTWARE_VERSION);
-  cout << updateHTML << endl;
+  server.on("/SoftwareVersion", []() {
+    server.send(200, "application/json",  "\"" + SOFTWARE_VERSION + "\"");
+  });
 
   // Enable the weak pull down resistors
   ESP32Encoder::useInternalWeakPullResistors = DOWN;
@@ -198,6 +194,12 @@ void setup() {
   Serial.begin(115200, SERIAL_8N1);
   Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
   SPIFFSstart();
+  server.serveStatic("/B612-Bold.ttf", SPIFFS, "/B612-Bold.ttf");
+  server.serveStatic("/B612-Regular.ttf", SPIFFS, "/B612-Regular.ttf");
+  server.serveStatic("/style.css", SPIFFS, "/style.css");
+  server.serveStatic("/script.js", SPIFFS, "/script.js");
+  server.serveStatic("/serverIndex", SPIFFS, "/display-update.html");
+  server.serveStatic("/", SPIFFS, "/display-login.html");
 
   xTaskCreate(SerialScan, "Serial Scan", 5000, NULL, 50, &SerialScanTask);
   xTaskCreate(EncoderReader, "Encoder Task", 5000, NULL, 80, &TaskEncoder);
@@ -311,19 +313,19 @@ void loop() {
         /*return index page which is stored in serverIndex */
         server.on("/", HTTP_GET, []() {
           server.sendHeader("Connection", "close");
-          server.send(200, "text/html", loginHTML);
+          server.send(200, "text/html", "/display-login.html");
         });
         server.on("/serverIndex", HTTP_GET, []() {
           server.sendHeader("Connection", "close");
-          server.send(200, "text/html", updateHTML);
+          server.send(200, "text/html", "/display-update.html");
         });
         server.on("/style.css", HTTP_GET, []() {
           server.sendHeader("Connection", "close");
-          server.send(200, "text/css", serverCSS);
+          server.send(200, "text/css", "/style.css");
         });
         server.on("/script.js", HTTP_GET, []() {
           server.sendHeader("Connection", "close");
-          server.send(200, "text/js", serverJS);
+          server.send(200, "text/js", "/script.js");
         });
         /*handling uploading firmware file */
         server.on("/update", HTTP_POST, []() {
@@ -1269,7 +1271,7 @@ void SerialScan (void *p) {
         Serial.print ("filtered: ");
         Serial.println(stf);
       }
-      
+
       //
       //analyse true airspeed
       //
