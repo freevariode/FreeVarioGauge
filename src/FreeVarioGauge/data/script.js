@@ -1,3 +1,13 @@
+function renew() {
+	fetch('/SoftwareVersion').then(function (response) {
+		  return response.json();
+	}).then(function (text) {
+		  document.querySelector('#SoftwareVersion').innerHTML = text;
+	});
+}
+
+document.addEventListener('DOMContentLoaded', renew);
+
 class SubmitBar {
 	constructor(elem){
 		this.elem = elem;
@@ -85,12 +95,133 @@ for(let form of document.querySelectorAll('form.background')){
 	}
 }
 
-function renew() {
-	fetch('/SoftwareVersion').then(function (response) {
-		  return response.json();
-	}).then(function (text) {
-		  document.querySelector('#SoftwareVersion').innerHTML = text;
+
+// FLASH CYCLE SIMULATION
+
+let elemCycledemo = document.getElementById('cycledemo');
+let cycledemoRunning = false;
+let overhanging = null;
+let flashduration = 15;
+let defaultCycleDuration = 15 * 4 + 600 + 300 + 100 + 1100;
+let inputs = elemCycledemo.querySelectorAll('.break input');
+
+if(elemCycledemo){
+	function updateEnergy() {
+		let onduration = flashduration * 4;
+		let offduration = 0;
+
+		for(inp of inputs){
+			offduration += Number(inp.value) ?? 0;
+		}
+
+
+		let cycleDuration = onduration + offduration;
+
+		let defaultOnRatio = onduration / defaultCycleDuration;
+		let onRatio = onduration / cycleDuration;
+
+		let energyusage = Math.round(onRatio / defaultOnRatio * 100);
+
+		document.getElementById('heatpercent').innerHTML = energyusage + ' %';
+
+		if(energyusage <= 100){
+			document.getElementById('energy').setAttribute('data-level', 'green');
+		} else if(energyusage <= 120){
+			document.getElementById('energy').setAttribute('data-level', 'yellow');
+		} else {
+			document.getElementById('energy').setAttribute('data-level', 'red');
+		}
+	}
+
+	for(inp of inputs){
+		inp.addEventListener('input', () => { updateEnergy(); });
+	}
+
+	updateEnergy();
+
+	async function runCycleDemo() {
+		cycledemoRunning = true;
+		elemCycledemo.classList.add('running');
+		
+		let flashes = elemCycledemo.getElementsByClassName('flash');
+		let breaks = elemCycledemo.getElementsByClassName('breakbar');
+		let flashtime = 300;
+
+		while(cycledemoRunning){
+			for(let i = 0; i < Math.max(flashes.length, breaks.length); i++){
+				if(flashes[i]){
+					await flash(flashes[i], flashduration, flashtime, true);
+				}
+
+				// await flashAll(flashes, flashtime);
+
+				if(breaks[i] && inputs[i]){
+					await flash(breaks[i], inputs[i].value);
+				}
+			}
+		}
+	}
+
+	function flashAll(elems, duration) {
+		for(elem of elems){
+			elem.classList.add('current');
+		}
+
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				for(elem of elems){
+					elem.classList.remove('current');
+				}
+
+				resolve();
+			}, duration);
+		});
+	}
+
+	function flash(elem, duration, overhang = 0, endOverhang = false) {
+		if(overhanging && endOverhang){
+			overhanging.classList.remove('current');
+			overhanging = null;
+		}
+
+		elem.classList.add('current');
+
+		if(overhang){
+			overhanging = elem;
+		}
+
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				setTimeout(() => {
+					elem.classList.remove('current');
+					currentflashing = null;
+				}, overhang);
+
+				resolve();
+			}, duration);
+		});
+	}
+
+	function stopCycleDemo() {
+		elemCycledemo.classList.remove('running');
+		cycledemoRunning = false;
+	}
+
+	document.getElementById('cycletrystart').addEventListener('click', () => {
+		runCycleDemo();
+	});
+
+	document.getElementById('cycletrystop').addEventListener('click', () => {
+		stopCycleDemo();
 	});
 }
 
-document.addEventListener('DOMContentLoaded', renew);
+for(let inp of document.querySelectorAll('.fileinput input')){
+	inp.addEventListener('change', () => {
+		let name = inp.parentNode.querySelector('.filename');
+		name.innerHTML = inp.files[0].name;
+	});
+}
+
+
+

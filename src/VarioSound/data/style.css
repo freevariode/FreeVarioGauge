@@ -275,6 +275,34 @@ input[type=radio]:focus + label.pointer + label.value + label.unit {
 	color: #9a9a9a;
 }
 
+.fileinput {
+	display: flex;
+	border: 0.1rem solid deepskyblue;
+	max-width: max-content;
+	margin: 1rem 0;
+	padding: .5rem;
+	gap: .75rem;
+	align-items: baseline;
+	flex-wrap: wrap;
+}
+
+.fileinput input {
+	display: none;
+}
+
+.fileinput .select {
+	display: block;
+	border: 0.1rem solid #ffffff;
+	padding: .5rem;
+	font-size: 1.3rem;
+}
+
+.fileinput .select:hover,
+.fileinput .select:focus {
+	border-color: orange;
+	color: #ffffff;
+}
+
 button {
 	--color: #ffffff;
 	display: block;

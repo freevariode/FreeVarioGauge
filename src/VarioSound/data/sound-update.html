@@ -17,6 +17,11 @@
 					<fieldset>
 						<legend>Firmware Update</legend>
 						<label class="name" for="updatefile">Firmware file</label>
+						<div class="fileinput">
+							<input type="file" name="update" id="updatefile" required>
+							<label class="select" for="updatefile">Select…</label>
+							<div class="filename">No file selected.</div>
+						</div>
 						<label class="tip" for="updatefile">
  							Please make sure to select the correct firmware binary file. Its name should be 
  							»VarioSound.ino.bin«.
@@ -25,7 +30,6 @@
  							Only use official firmware that you downloaded from our website. Uploading other files may
  							make the device unusable.
  						</label>
- 						<input type="file" name="update" id="updatefile" required>
 					</fieldset>
 					
 					<button type="submit" class="submitbar" data-status="save" data-progress="0">
