@@ -71,7 +71,7 @@ const long NOT_SET = -1;
 const long LONGPRESS_TIME = 500;
 long pushButtonPressTime = NOT_SET;
 
-const String SOFTWARE_VERSION = "  V1.2.2 - 2023";
+const String SOFTWARE_VERSION = "  V1.2.3 - 2023";
 
 const char *host = "FreeVario_Displayboard";
 const char *ssid = "FV_Displayboard";
@@ -98,7 +98,8 @@ static String valueMuteAsString = "ON";
 static String valueAttenAsString = "2";
 static String valueGrsAsString = "0";
 static String valueTasAsString = "0";
-static String valueVaaAsString = "0.0";
+static String valueVaaAsString = "+0.0";
+static String valueVanAsString = "+0.0";
 static String valueHigAsString = "0";
 static String valueHagAsString = "0";
 static String valueMacAsString = "0.0";
@@ -110,6 +111,7 @@ extern uint16_t logoOV[];
 
 static float var = 0;
 static float valueVaaAsFloat = 0;
+static float valueVanAsFloat = 0;
 static float valueTasAsFloat = 0;
 static float valueGrsAsFloat = 0;
 static float valueMacAsFloat = 0.5;
@@ -124,6 +126,7 @@ static double valueBugAsFloat = 0;
 
 static bool varWasUpdated = true;
 static bool vaaWasUpdated = true;
+static bool vanWasUpdated = true;
 static bool tasWasUpdated = true;
 static bool grsWasUpdated = true;
 static bool mcWasUpdated =  true;
@@ -996,11 +999,21 @@ void ValueRefresh(void *parameter) {
 
     //void DrawInfo(TFT_eSprite fontOfName, TFT_eSprite fontOfInfo, String spriteName, String value,
     //String unit, int spriteNameWidth, int spriteValueHight, int spriteValueWidth, int spriteunitWidth, int x, int y)
-    if (vaaWasUpdated) {
+    if (vaaWasUpdated && stf_mode_state == 0) {
       if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
       {
         DrawInfo(nameOfField, infoLarge, WHITE, "large", "Avg.", valueVaaAsString, "", 34, 40, 94, 0, 78, 60);
+        vanWasUpdated = true;
         vaaWasUpdated = false;
+        xSemaphoreGive(xTFTSemaphore);
+      }
+    }
+    if (vanWasUpdated && stf_mode_state == 1) {
+      if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+      {
+        DrawInfo(nameOfField, infoLarge, WHITE, "large", "Net.", valueVanAsString, "", 34, 40, 94, 0, 78, 60);
+        vanWasUpdated = false;
+        vaaWasUpdated = true;
         xSemaphoreGive(xTFTSemaphore);
       }
     }
@@ -1189,8 +1202,6 @@ void SerialScan (void *p) {
       //
       //analyse vertical speed
       //
-
-
       if (variable == "VAR") {
         if (var !=  wertAsFloat) {
           varWasUpdated = true;
@@ -1215,6 +1226,26 @@ void SerialScan (void *p) {
         else {
           valueVaaAsString = dtostrf(abs(valueVaaAsFloat), 3, 1, buf);
           valueVaaAsString = "-" + valueVaaAsString;
+        }
+      }
+
+      //
+      //analyse netto vertical speed
+      //
+      else if (variable == "VAN") {
+        if (valueVanAsFloat !=  wertAsFloat) {
+          vanWasUpdated = true;
+        }
+        valueVanAsFloat = wertAsFloat;
+        char buf[20];
+        // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
+        if (valueVanAsFloat >= 0) {
+          valueVanAsString = dtostrf(abs(valueVanAsFloat), 3, 1, buf);
+          valueVanAsString = "+" + valueVanAsString;
+        }
+        else {
+          valueVanAsString = dtostrf(abs(valueVanAsFloat), 3, 1, buf);
+          valueVanAsString = "-" + valueVanAsString;
         }
       }
 
