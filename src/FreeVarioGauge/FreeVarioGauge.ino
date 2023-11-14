@@ -71,7 +71,7 @@ const long NOT_SET = -1;
 const long LONGPRESS_TIME = 500;
 long pushButtonPressTime = NOT_SET;
 
-const String SOFTWARE_VERSION = "  V1.2.3 - 2023";
+const String SOFTWARE_VERSION = "  V1.3 - 2023";
 
 const char *host = "FreeVario_Displayboard";
 const char *ssid = "FV_Displayboard";
@@ -1385,7 +1385,7 @@ void SerialScan (void *p) {
           bugWasUpdated = true;
         }
         valueBugAsFloat = wertAsFloat;
-        valueBugAsString = wert;
+        valueBugAsString = String(valueBugAsFloat, 0);
       }
 
       //
