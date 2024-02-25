@@ -274,7 +274,7 @@ void loop() {
       TXD2 = 16;
       Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
       delay(10);
-      pinMode(LED_BUILTIN, OUTPUT);
+      //pinMode(LED_BUILTIN, OUTPUT);
       Serial.println();
       Serial.println("Startup Update Mode");
       connectTime = millis();
@@ -282,7 +282,7 @@ void loop() {
         Serial2.println("$PFV," + soundMode + "," + soundIP + "*");
         delay(500);
       }
-      /*use mdns for host name resolution*/
+      //use mdns for host name resolution//
       if (!MDNS.begin(host)) { //http://esp32.local
         Serial.println("Error setting up MDNS responder!");
         while (1) {
@@ -290,7 +290,7 @@ void loop() {
         }
       }
       Serial.println("mDNS responder started");
-      /*return index page which is stored in serverIndex */
+      //return index page which is stored in serverIndex //
       server.on("/", HTTP_GET, []() {
         server.sendHeader("Connection", "close");
         server.send(200, "text/html", "/sound-login.html");
@@ -307,7 +307,7 @@ void loop() {
         server.sendHeader("Connection", "close");
         server.send(200, "text/js", "/script.js");
       });
-      /*handling uploading firmware file */
+      //handling uploading firmware file //
       server.on("/update", HTTP_POST, []() {
         server.sendHeader("Connection", "close");
         server.send((Update.hasError()) ? 422 : 200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
@@ -321,7 +321,7 @@ void loop() {
             Update.printError(Serial);
           }
         } else if (upload.status == UPLOAD_FILE_WRITE) {
-          /* flashing firmware to ESP*/
+          // flashing firmware to ESP//
           if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
             Update.printError(Serial);
           }

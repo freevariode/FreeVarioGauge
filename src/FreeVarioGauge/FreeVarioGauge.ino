@@ -305,7 +305,7 @@ void loop() {
             vTaskDelay(50);
           }
         }
-        /*use mdns for host name resolution*/
+        //use mdns for host name resolution
         if (!MDNS.begin(host)) { //http://esp32.local
           Serial.println("Error setting up MDNS responder!");
           while (1) {
@@ -313,55 +313,55 @@ void loop() {
           }
         }
         Serial.println("mDNS responder started");
-        /*return index page which is stored in serverIndex */
-        server.on("/", HTTP_GET, []() {
-          server.sendHeader("Connection", "close");
-          server.send(200, "text/html", "/display-login.html");
-        });
-        server.on("/serverIndex", HTTP_GET, []() {
-          server.sendHeader("Connection", "close");
-          server.send(200, "text/html", "/display-update.html");
-        });
-        server.on("/style.css", HTTP_GET, []() {
-          server.sendHeader("Connection", "close");
-          server.send(200, "text/css", "/style.css");
-        });
-        server.on("/script.js", HTTP_GET, []() {
-          server.sendHeader("Connection", "close");
-          server.send(200, "text/js", "/script.js");
-        });
-        /*handling uploading firmware file */
-        server.on("/update", HTTP_POST, []() {
-          server.sendHeader("Connection", "close");
-          server.send((Update.hasError()) ? 422 : 200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
-          delay(1000);
-          ESP.restart();
-        }, []() {
-          HTTPUpload& upload = server.upload();
-          if (upload.status == UPLOAD_FILE_START) {
-            Serial.printf("Update: %s\n", upload.filename.c_str());
-            if (!Update.begin(UPDATE_SIZE_UNKNOWN)) { //start with max available size
-              Update.printError(Serial);
-            }
-          } else if (upload.status == UPLOAD_FILE_WRITE) {
-            /* flashing firmware to ESP*/
-            if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
-              Update.printError(Serial);
-            }
-          } else if (upload.status == UPLOAD_FILE_END) {
-            if (Update.end(true)) { //true to set the size to the current progress
-              Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
-            } else {
-              Update.printError(Serial);
-            }
-          }
-        });
-        server.begin();
-        updateScreen(tft);
+        //return index page which is stored in serverIndex //
+      server.on("/", HTTP_GET, []() {
+      server.sendHeader("Connection", "close");
+      server.send(200, "text/html", "/display-login.html");
+      });
+      server.on("/serverIndex", HTTP_GET, []() {
+      server.sendHeader("Connection", "close");
+      server.send(200, "text/html", "/display-update.html");
+      });
+      server.on("/style.css", HTTP_GET, []() {
+      server.sendHeader("Connection", "close");
+      server.send(200, "text/css", "/style.css");
+      });
+      server.on("/script.js", HTTP_GET, []() {
+      server.sendHeader("Connection", "close");
+      server.send(200, "text/js", "/script.js");
+      });
+      //handling uploading firmware file //
+      server.on("/update", HTTP_POST, []() {
+      server.sendHeader("Connection", "close");
+      server.send((Update.hasError()) ? 422 : 200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+      delay(1000);
+      ESP.restart();
+      }, []() {
+      HTTPUpload& upload = server.upload();
+      if (upload.status == UPLOAD_FILE_START) {
+        Serial.printf("Update: %s\n", upload.filename.c_str());
+        if (!Update.begin(UPDATE_SIZE_UNKNOWN)) { //start with max available size
+          Update.printError(Serial);
+        }
+      } else if (upload.status == UPLOAD_FILE_WRITE) {
+        // flashing firmware to ESP//
+        if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
+          Update.printError(Serial);
+        }
+      } else if (upload.status == UPLOAD_FILE_END) {
+        if (Update.end(true)) { //true to set the size to the current progress
+          Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
+        } else {
+          Update.printError(Serial);
+        }
+      }
+      });
+      server.begin();
+      updateScreen(tft);
       }
       server.handleClient();
       delay(1);
-    }
+      }
     else {
       delay(1500);
       showBootScreen(SOFTWARE_VERSION, tft);
