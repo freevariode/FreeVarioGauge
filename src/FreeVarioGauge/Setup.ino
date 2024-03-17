@@ -1,0 +1,79 @@
+void setup() {
+  server.on("/SoftwareVersion", []() {
+    server.send(200, "application/json",  "\"" + SOFTWARE_VERSION + "\"");
+  });
+
+  // Enable the weak pull down resistors
+  ESP32Encoder::useInternalWeakPullResistors = DOWN;
+
+  if ( xTFTSemaphore == NULL )
+  { xTFTSemaphore = xSemaphoreCreateMutex();
+    if ( ( xTFTSemaphore ) != NULL )
+      xSemaphoreGive( ( xTFTSemaphore ) );
+  }
+
+  tft.init();
+  tft.setRotation(0);
+  background.setColorDepth(8);
+  background.createSprite(240, 320);
+  background.fillSprite(TFT_BLACK);
+
+  // set starting count value
+  Vario_Enc.attachHalfQuad(23, 32);
+  Vario_Enc.setCount(16380);
+  pinMode(VE_PB, INPUT_PULLUP);
+
+  // Note the format for setting a serial port is as follows: Serial2.begin(baud-rate, protocol, RX pin, TX pin);
+  Serial.begin(115200, SERIAL_8N1);
+  Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
+  SPIFFSstart();
+  server.serveStatic("/B612-Bold.ttf", SPIFFS, "/B612-Bold.ttf");
+  server.serveStatic("/B612-Regular.ttf", SPIFFS, "/B612-Regular.ttf");
+  server.serveStatic("/style.css", SPIFFS, "/style.css");
+  server.serveStatic("/script.js", SPIFFS, "/script.js");
+  server.serveStatic("/serverIndex", SPIFFS, "/display-update.html");
+  server.serveStatic("/", SPIFFS, "/display-login.html");
+
+  xTaskCreate(SerialScan, "Serial Scan", 5000, NULL, 1, &SerialScanTask);
+  xTaskCreate(EncoderReader, "Encoder Task", 5000, NULL, 1, &TaskEncoder);
+  xTaskCreate(ValueRefresh, "Value Refresh", 5000, NULL, 1, &TaskValueRefresh);
+
+  prefs.begin("settings", false);
+  valueMuteAsInt = prefs.getUInt("Mute", 1);
+  valueAttenAsInt = prefs.getUInt("ATTEN", 2);
+  valueWindAsInt = prefs.getUInt("Wind", 1);
+  nameSpeed = prefs.getString("nameSpeed", "GS");
+  nameHight = prefs.getString("nameHight", "MSL");
+  prefs.end();
+
+  valueAttenAsString = String(valueAttenAsInt);
+
+  if (valueMuteAsInt == 0) {
+    valueMuteAsString = "OFF";
+    muteWasUpdated = true;
+  }
+  else if (valueMuteAsInt == 1) {
+    valueMuteAsString = "ON";
+    muteWasUpdated = true;
+  }
+  
+  if (valueWindAsInt == 0) {
+    valueMuteAsString = "OFF";
+    windWasUpdated = true;
+  }
+  else if (valueWindAsInt == 1) {
+    valueMuteAsString = "ON";
+    windWasUpdated = true;
+  }
+}
+
+// ************************************
+// ****  Initialize SPIFFS memory  ****
+// ************************************
+void SPIFFSstart() {
+  if (!SPIFFS.begin()) {
+    Serial.println("SPIFFS initialisation failed!");
+    while (1) yield(); // Stay here twiddling thumbs waiting
+  }
+  Serial.println("\r\nInitialisation done.");
+}
