@@ -62,9 +62,9 @@ void SerialScan (void *p) {
       String wert = dataString.substring(pos1 + 1, pos2);   //erfasst den zweiten Datensatz
       float wertAsFloat = wert.toFloat();                   // der Wert als float
 
-      //
-      //analyse vertical speed
-      //
+      //**********************************
+      //****  analyse vertical speed  ****
+      //**********************************
       if (variable == "VAR") {
         if (var !=  wertAsFloat) {
           varWasUpdated = true;
@@ -72,9 +72,9 @@ void SerialScan (void *p) {
         var = wertAsFloat;
       }
 
-      //
-      //analyse average vertical speed
-      //
+      //******************************************
+      //****  analyse average vertical speed  ****
+      //******************************************
       else if (variable == "VAA") {
         if (valueVaaAsFloat !=  wertAsFloat) {
           vaaWasUpdated = true;
@@ -92,9 +92,9 @@ void SerialScan (void *p) {
         }
       }
 
-      //
-      //analyse netto vertical speed
-      //
+      //****************************************
+      //****  analyse netto vertical speed  ****
+      //****************************************
       else if (variable == "VAN") {
         if (valueVanAsFloat !=  wertAsFloat) {
           vanWasUpdated = true;
@@ -112,9 +112,9 @@ void SerialScan (void *p) {
         }
       }
 
-      //
-      //analyse internal McCready value
-      //
+      //*******************************************
+      //****  analyse internal McCready value  ****
+      //*******************************************
       else if (variable == "MCI") {
 
         if (valueMacAsFloat !=  wertAsFloat) {
@@ -127,9 +127,9 @@ void SerialScan (void *p) {
         valueMacAsString = dtostrf(valueMacAsFloat, 3, 1, buf);
       }
 
-      //
-      //analyse external McCready value
-      //
+      //*******************************************
+      //****  analyse external McCready value  ****
+      //*******************************************
       else if ((variable == "MCE") && (mci == false)) {
         if (valueMacAsFloat !=  wertAsFloat) {
           mcWasUpdated = true;
@@ -140,16 +140,16 @@ void SerialScan (void *p) {
         valueMacAsString = dtostrf(valueMacAsFloat, 3, 1, buf);
       }
 
-      //
-      //analyse current XCSoar mode
-      //
+      //***************************************
+      //****  analyse current XCSoar mode  ****
+      //***************************************
       else if (variable == "MOD") {
         mod = wert;
       }
 
-      //
-      //analyse speed to fly
-      //
+      //********************************
+      //****  analyse speed to fly  ****
+      //********************************
       else if (variable == "STF") {
         stfValue = wert.toFloat();
         if (stf_mode_state == 1 && valueTasAsFloat > 10) {
@@ -161,9 +161,9 @@ void SerialScan (void *p) {
         }
       }
 
-      //
-      //analyse true airspeed
-      //
+      //*********************************
+      //****  analyse true airspeed  ****
+      //*********************************
       else if (variable == "TAS") {
 
         if (valueTasAsFloat != wertAsFloat) {
@@ -175,9 +175,9 @@ void SerialScan (void *p) {
         valueTasAsString = dtostrf(valueTasAsFloat, 3, 0, buf);
       }
 
-      //
-      //analyse groundspeed
-      //
+      //*******************************
+      //****  analyse groundspeed  ****
+      //*******************************
       else if (variable == "GRS") {
         if (valueGrsAsFloat != wertAsFloat) {
           grsWasUpdated = true;
@@ -188,9 +188,9 @@ void SerialScan (void *p) {
         valueGrsAsString = dtostrf(valueGrsAsFloat, 3, 0, buf);
       }
 
-      //
-      //analyse hight MSL
-      //
+      //*****************************
+      //****  analyse hight MSL  ****
+      //*****************************
       else if (variable == "HIG") {
         if (valueHigAsFloat != wertAsFloat) {
           higWasUpdated = true;
@@ -201,9 +201,9 @@ void SerialScan (void *p) {
         valueHigAsString = dtostrf(valueHigAsFloat, 4, 0, buf);
       }
 
-      //
-      //analyse hight about ground level
-      //
+      //********************************************
+      //****  analyse hight about ground level  ****
+      //********************************************
       else if (variable == "HAG") {
         if (valueHagAsFloat != wertAsFloat) {
           hagWasUpdated = true;
@@ -214,9 +214,9 @@ void SerialScan (void *p) {
         valueHagAsString = dtostrf(valueHagAsFloat, 4, 0, buf);
       }
 
-      //
-      //analyse average wind strength
-      //
+      //*****************************************
+      //****  analyse average wind strength  ****
+      //*****************************************
       else if (variable == "AWS") {
 
         if (valueAwsAsFloat != wertAsFloat) {
@@ -228,9 +228,9 @@ void SerialScan (void *p) {
         valueAwsAsString = dtostrf(valueAwsAsFloat, 3, 0, buf);
       }
 
-      //
-      //analyse current wind strength
-      //
+      //*****************************************
+      //****  analyse current wind strength  ****
+      //*****************************************
       else if (variable == "CWS") {
 
         if (valueCwsAsFloat != wertAsFloat) {
@@ -242,9 +242,9 @@ void SerialScan (void *p) {
         valueCwsAsString = dtostrf(valueCwsAsFloat, 3, 0, buf);
       }
 
-      //
-      //analyse average wind direction
-      //
+      //******************************************
+      //****  analyse average wind direction  ****
+      //******************************************
       else if (variable == "AWD") {
 
         if (valueAwdAsFloat != wertAsFloat) {
@@ -253,9 +253,9 @@ void SerialScan (void *p) {
         valueAwdAsFloat = wertAsFloat;
       }
 
-      //
-      //analyse current wind direction
-      //
+      //******************************************
+      //****  analyse current wind direction  ****
+      //******************************************
       else if (variable == "CWD") {
 
         if (valueCwdAsFloat != wertAsFloat) {
@@ -264,9 +264,9 @@ void SerialScan (void *p) {
         valueCwdAsFloat = wertAsFloat;
       }
 
-      //
-      //analyse heading
-      //
+      //***************************
+      //****  analyse heading  ****
+      //***************************
       else if (variable == "HEA") {
 
         if (valueHeaAsFloat != wertAsFloat) {
@@ -275,9 +275,9 @@ void SerialScan (void *p) {
         valueHeaAsFloat = wertAsFloat;
       }
 
-      //
-      //analyse temperatur
-      //
+      //******************************
+      //****  analyse temperatur  ****
+      //******************************
       else if (variable == "TEM") {
         if (tem != wertAsFloat) {
           tempWasUpdated = true;
@@ -285,9 +285,9 @@ void SerialScan (void *p) {
         tem = wertAsFloat;
       }
 
-      //
-      //analyse QNH
-      //
+      //***********************
+      //****  analyse QNH  ****
+      //***********************
       else if (variable == "QNH") {
         if ((valueQnhAsFloat != wertAsFloat) && (wertAsFloat < 2000)) {
           qnhWasUpdated = true;
@@ -296,9 +296,9 @@ void SerialScan (void *p) {
         valueQnhAsString = String(valueQnhAsFloat, 0);
       }
 
-      //
-      //analyse bug
-      //
+      //***********************
+      //****  analyse bug  ****
+      //***********************
       else if (variable == "BUG") {
         if (valueBugAsFloat != wertAsFloat) {
           bugWasUpdated = true;
@@ -307,17 +307,17 @@ void SerialScan (void *p) {
         valueBugAsString = String(valueBugAsFloat, 0);
       }
 
-      //
-      //analyse Mute
-      //
+      //************************
+      //****  analyse Mute  ****
+      //************************
       else if (variable == "MUT") {
         muteWasUpdated = true;
         valueMuteAsInt = wert.toInt();
       }
 
-      //
-      //analyse Attenuation
-      //
+      //*******************************
+      //****  analyse Attenuation  ****
+      //*******************************
       else if (variable == "ATT") {
         attWasUpdated = true;
         valueAttenAsInt = wert.toInt();

@@ -23,9 +23,9 @@ void ValueRefresh(void *parameter) {
     background.fillSprite(TFT_BLACK);
     ArcRefresh();
 
-    //**************************************
-    //**** Calculate and Refresh Needles****
-    //**************************************
+    //*****************************************
+    //****  Calculate and Refresh Needles  ****
+    //*****************************************
     if ((valueWindAsInt == 1) && (valueAwdAsFloat != -1000)) {
       /**
       //Formel, falls OpenSoar angibt, wo der Wind her kommt
@@ -69,9 +69,9 @@ void ValueRefresh(void *parameter) {
       }
     }
 
-    //**************************
-    //**** Draw Menu Frames ****
-    //**************************
+    //****************************
+    //****  Draw Menu Frames  ****
+    //****************************
     if (requestMenuPaint) {
       if (requestDrawMenuLevel == 2) {
         if (requestDrawMenu == 1) {
@@ -133,9 +133,9 @@ void ValueRefresh(void *parameter) {
       }
     }
 
-    //***********************
-    //**** Refresh Values****
-    //***********************
+    //**************************
+    //****  Refresh Values  ****
+    //**************************
     if ((valueWindAsInt == 1) && (valueAwdAsFloat != -1000)) {
       if (valueCwsAsFloat >= 99) {
         valueCwsAsString = "99";

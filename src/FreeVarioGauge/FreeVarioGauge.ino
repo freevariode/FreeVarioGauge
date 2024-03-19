@@ -15,14 +15,16 @@
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /** ToDo
- *  Performance verbessern
- *  Encoder debouncen
- *  Treiber um Windinfo erweitern
- */
+    Performance verbessern
+    Menü testen
+    Gerät testen
+    Treiber um Windinfo erweitern
+    DrawData in Tab verschieben
+*/
 
-//************************************************
-//****  Screen and SPIFFS Headers and Defines ****
-//************************************************
+//*************************************************
+//****  Screen and SPIFFS Headers and Defines  ****
+//*************************************************
 #include <Streaming.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
@@ -80,8 +82,8 @@ SemaphoreHandle_t xTFTSemaphore;
 
 const long NOT_SET = -1;
 const long LONGPRESS_TIME = 500;
-const long SHORTPRESS_TIME_MIN = 30;
-const long SHORTPRESS_TIME_MAX = 200;
+const long SHORTPRESS_TIME_MIN = 20;
+const long SHORTPRESS_TIME_MAX = 50;
 long pushButtonPressTime = NOT_SET;
 
 const String SOFTWARE_VERSION = "  V2.0 - 2024";
@@ -142,6 +144,8 @@ static float instWindAngle = 0;
 static float valueHeaAsFloat = 0;
 static float tem = 0;
 static float stf = 0.0;
+static float menuActiveSince = 0;                  // Will be updated in menu run
+float encoderPosition = (float) - 999;
 
 static double stfValue = 0;
 static double valueQnhAsFloat = 1013;
@@ -175,7 +179,20 @@ bool mci = false;
 bool pushButtonIsLongpress = false;
 bool pushButtonIsShortpress = false;
 bool pushButtonPressed = false;
+bool encoderLeft = false;
+bool encoderRight = false;
+bool encoderWasMoved = false;
+bool menuWasTriggered = false;
+bool subMenuTriggered = false;
+bool subMenuLevelTwoTriggered = false;
 
+const int MENU_SPEED_TYP = 1;
+const int MENU_HIGHT_TYP = 2;
+const int MENU_VALUE_TYP = 3;
+const int MENU_VALUE_QNH = 1;
+const int MENU_VALUE_BUG = 2;
+const int MENU_VALUE_MUTE = 3;
+const int DEBOUNCE_DELAY = 20;
 int i = 0;
 int n = 0;
 int statusCode;
@@ -191,6 +208,7 @@ int valueWindAsInt = 1;
 int changeMode;
 int oldChangeMode;
 int offset = 0;
+int selectedMenu = MENU_SPEED_TYP;
 
 static int requestDrawMenu = 0;
 static int requestDrawMenuLevel = 0;
@@ -202,9 +220,10 @@ static unsigned long lastTimeReady = 0;
 static unsigned long lastTimeModeWasSend = 0;
 static unsigned long lastTimeSerial2 = 0;
 unsigned long loopTime = 5000;
-//***********************************
-//**** Draw ValueBoxes and Data  ****
-//***********************************
+
+//************************************
+//****  Draw ValueBoxes and Data  ****
+//************************************
 void DrawInfo(TFT_eSprite fontOfName, uint32_t color, String infoType, String spriteName, String value, String unit, int spriteNameWidth, int spriteValueHight, int spriteValueWidth, int spriteunitWidth, int x, int y) {
   fontOfName.loadFont("micross15");
   fontOfName.createSprite(spriteNameWidth, 25);

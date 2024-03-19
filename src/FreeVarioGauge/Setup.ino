@@ -3,7 +3,9 @@ void setup() {
     server.send(200, "application/json",  "\"" + SOFTWARE_VERSION + "\"");
   });
 
-  // Enable the weak pull down resistors
+  //***********************************************
+  //****  Enable the weak pull down resistors  ****
+  //***********************************************
   ESP32Encoder::useInternalWeakPullResistors = DOWN;
 
   if ( xTFTSemaphore == NULL )
@@ -17,13 +19,12 @@ void setup() {
   background.setColorDepth(8);
   background.createSprite(240, 320);
   background.fillSprite(TFT_BLACK);
-
-  // set starting count value
+  //************************************
+  //****  set starting count value  ****
+  //************************************
   Vario_Enc.attachHalfQuad(23, 32);
   Vario_Enc.setCount(16380);
   pinMode(VE_PB, INPUT_PULLUP);
-
-  // Note the format for setting a serial port is as follows: Serial2.begin(baud-rate, protocol, RX pin, TX pin);
   Serial.begin(115200, SERIAL_8N1);
   Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
   SPIFFSstart();
@@ -35,7 +36,6 @@ void setup() {
   server.serveStatic("/", SPIFFS, "/display-login.html");
 
   xTaskCreate(SerialScan, "Serial Scan", 5000, NULL, 1, &SerialScanTask);
-  xTaskCreate(EncoderReader, "Encoder Task", 5000, NULL, 1, &TaskEncoder);
   xTaskCreate(ValueRefresh, "Value Refresh", 5000, NULL, 1, &TaskValueRefresh);
 
   prefs.begin("settings", false);

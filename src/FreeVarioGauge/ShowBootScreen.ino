@@ -47,7 +47,9 @@ void showBootScreen(String versionString) {
     bootSprite.pushSprite(40, 245);
     bootSprite.deleteSprite();
 
-    //Waiting until XCSoar delivers correct values
+    //********************************************************
+    //****  Waiting until XCSoar delivers correct values  ****
+    //********************************************************
     do {
       if (Serial2.available()) {
         char serialString = Serial2.read();

@@ -14,9 +14,9 @@ double sf;                                      //Speedfaktor zur Berechnung des
 float B, B_alt;
 float MiddleRadius = ((OuterRadius - InnerRadius) / 2) + InnerRadius; //Middle of Sliding Circle radius
 
-//*****************
-// Refresh Arc ****
-//*****************
+//***********************
+//****  Refresh Arc *****
+//***********************
 void ArcRefresh() {
   while (showBootscreen) {
     vTaskDelay(1000);
@@ -55,14 +55,14 @@ void fillArc(int x, int y, int start_angle, int seg_count, int rx, int ry, int w
     y1 = 320 - (sy * ry + y);
   }
 
-  //*****************************************
-  // Draw color blocks every inc degrees ****
-  //*****************************************
+  //***********************************************
+  //****  Draw color blocks every inc degrees  ****
+  //***********************************************
   for (int i = start_angle; i < (start_angle + seg * seg_count); i += inc) {
 
-    //***************************************************
-    // Calculate pair of coordinates for segment end ****
-    //***************************************************
+    //*********************************************************
+    //****  Calculate pair of coordinates for segment end  ****
+    //*********************************************************
     uint16_t y2;
     uint16_t y3;
     float sx2 = cos((i + seg - 90) * DEG2RAD);
@@ -78,9 +78,9 @@ void fillArc(int x, int y, int start_angle, int seg_count, int rx, int ry, int w
       y3 = -sy2 * ry + y;
     }
 
-    //*******************
-    //**** Draw Arc  ****
-    //*******************
+    //********************
+    //****  Draw Arc  ****
+    //********************
     if ((B >= 0)) {
       if (x0 < 150) {
         drawColoredArc.createSprite(x2 - x1 + 20, y0 - y3 + 10);
@@ -121,9 +121,9 @@ void fillArc(int x, int y, int start_angle, int seg_count, int rx, int ry, int w
         drawColoredArc.deleteSprite();
       }
     }
-    //********************************************************
-    // Copy segment end to sgement start for next segment ****
-    //********************************************************
+    //**************************************************************
+    //****  Copy segment end to sgement start for next segment  ****
+    //**************************************************************
     x0 = x2;
     y0 = y2;
     x1 = x3;
@@ -135,9 +135,9 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
   stf_mode_state = digitalRead(STF_MODE);
   unsigned int color;
 
-  //*********************************
-  //****  Vario Mode Colored Arc ****
-  //*********************************
+  //**********************************
+  //****  Vario Mode Colored Arc  ****
+  //**********************************
   if (stf_mode_state == 0) {
     if (liftValue <= -6) B = -6;
     if ((liftValue > -6) && (liftValue < 6)) B = liftValue;
@@ -154,9 +154,9 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
     if (sf >= 6) B = 6;
   }
 
-  //*********************************
-  //**** Calculate Arc Segments  ****
-  //*********************************
+  //**********************************
+  //****  Calculate Arc Segments  ****
+  //**********************************
   segmentCount = abs(B) * 7.4;
   deg2rad(&inangle);
 
@@ -171,15 +171,15 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
     color = RED;
   }
 
-  //**************************************
-  //**** Start Funktioon to Draw Arc  ****
-  //**************************************
+  //***************************************
+  //****  Start Funktioon to Draw Arc  ****
+  //***************************************
   fillArc(160, 160, startAngle, segmentDraw, 160, 160, 30, color);
   B_alt = B;
 
-  //*************************************
-  //****  Draw divisions and numbers ****
-  //*************************************
+  //**************************************
+  //****  Draw divisions and numbers  ****
+  //**************************************
   for (int i = 70; i <= 300; i += 22) {
     float divangle = i;
     deg2rad(&divangle);
