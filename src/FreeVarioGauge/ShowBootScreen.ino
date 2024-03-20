@@ -64,7 +64,7 @@ void showBootScreen(String versionString) {
           dataString = "";
         }
       }
-    } while (serial2IsReady == 1); //0 = waiting for XCSoar, 1 = start without waiting
+    } while (serial2IsReady == 0); //0 = waiting for XCSoar, 1 = start without waiting
     bootSprite.unloadFont();
     tft.fillScreen(TFT_BLACK);
     lastTimeReady = millis();

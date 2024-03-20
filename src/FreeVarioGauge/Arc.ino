@@ -193,9 +193,13 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
     drawOuterLine.drawLine(0 + 10, 0 + 10, x1 - x0 + 10, y1 - y0 + 10, WHITE);
     drawOuterLine.pushToSprite(&background, x0 - 10, y0 - 10, TFT_BLACK);
     drawOuterLine.deleteSprite();
+
+  }
+  if (loadMenuArc) {
+    number.loadFont("micross20");
+    loadMenuArc = false;
   }
 
-  number.loadFont("micross20");
   number.createSprite(20, 25);
   number.setTextColor(WHITE, GREY);
   number.fillSprite(TFT_BLACK);

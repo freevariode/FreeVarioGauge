@@ -1,7 +1,6 @@
 void DrawMenu(int selectedMenuNumber, int level) {
   setDrawMenuLevel(selectedMenuNumber, level);
   requestMenuPaint = true;
-  requestMenuFontPaint = true;
 }
 
 void setDrawMenuLevel(int selectedMenuNumber, int level) {
@@ -17,10 +16,6 @@ void settingStartValueType () {
 void settingStandardValueType () {
   nameSetting = "MC";
   mcWasUpdated = true;
-}
-
-void requestFontRepaint() {
-  requestMenuFontPaint = true;
 }
 
 void Menu () {
@@ -50,7 +45,6 @@ void Menu () {
     // Wait for release of pushButton
     while (digitalRead(VE_PB) == LOW) {}
     setDrawMenuLevel(selectedMenu, 1);
-    requestFontRepaint();
     pushButtonIsLongpress = false;
   }
 
@@ -60,15 +54,12 @@ void Menu () {
   else if (!pushButtonPressed && menuWasTriggered && !subMenuTriggered && encoderWasMoved) {
     if (selectedMenu == MENU_SPEED_TYP) {
       setDrawMenuLevel(selectedMenu, 1);
-      requestFontRepaint();
     }
     else if (selectedMenu == MENU_HIGHT_TYP) {
       setDrawMenuLevel(selectedMenu, 1);
-      requestFontRepaint();
     }
     else if (selectedMenu == MENU_VALUE_TYP) {
       setDrawMenuLevel(selectedMenu, 1);
-      requestFontRepaint();
     }
     menuActiveSince = millis(); // set time to now
   }
@@ -121,14 +112,12 @@ void Menu () {
       subMenuTriggered = false;
       selectedMenu = MENU_SPEED_TYP;
       setDrawMenuLevel(selectedMenu, 0);
-      requestFontRepaint();
     }
     else if (selectedMenu == MENU_VALUE_TYP) {
       menuActiveSince = millis(); // set time to now
       subMenuTriggered = false;
       subMenuLevelTwoTriggered = true;
       setDrawMenuLevel(selectedMenu, 3);
-      requestFontRepaint();
     }
   }
 
@@ -147,7 +136,6 @@ void Menu () {
     settingStandardValueType();
     selectedMenu = MENU_SPEED_TYP;
     setDrawMenuLevel(selectedMenu, 0);
-    requestFontRepaint();
   }
 
   // check run time in menu and exit if time > 10000
@@ -156,20 +144,17 @@ void Menu () {
     settingStandardValueType();
     selectedMenu = MENU_SPEED_TYP;
     setDrawMenuLevel(selectedMenu, 0);
-    requestFontRepaint();
   }
   else if ((millis() - menuActiveSince) > 10000 && subMenuTriggered) {
     subMenuTriggered = false;
     settingStandardValueType();
     selectedMenu = MENU_SPEED_TYP;
     setDrawMenuLevel(selectedMenu, 0);
-    requestFontRepaint();
   }
   else if ((millis() - menuActiveSince) > 10000 && menuWasTriggered) {
     menuWasTriggered = false;
     settingStandardValueType();
     selectedMenu = MENU_SPEED_TYP;
     setDrawMenuLevel(selectedMenu, 0);
-    requestFontRepaint();
   }
 }

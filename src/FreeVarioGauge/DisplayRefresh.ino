@@ -28,16 +28,16 @@ void ValueRefresh(void *parameter) {
     //*****************************************
     if ((valueWindAsInt == 1) && (valueAwdAsFloat != -1000)) {
       /**
-      //Formel, falls OpenSoar angibt, wo der Wind her kommt
-      avgWindAngle = valueAwdAsFloat - valueHeaAsFloat;
-      if (avgWindAngle < 0) {
+        //Formel, falls OpenSoar angibt, wo der Wind her kommt
+        avgWindAngle = valueAwdAsFloat - valueHeaAsFloat;
+        if (avgWindAngle < 0) {
         avgWindAngle + 360;
-      }
-      instWindAngle = valueCwdAsFloat - valueHeaAsFloat;
-      if (instWindAngle < 0) {
+        }
+        instWindAngle = valueCwdAsFloat - valueHeaAsFloat;
+        if (instWindAngle < 0) {
         instWindAngle + 360;
-      }**/
-      
+        }**/
+
       //Formel, falls OpenSoar angibt, wohin der Wind weht
       avgWindAngle = valueHeaAsFloat - valueAwdAsFloat + 180;
       if (avgWindAngle < 0) {
@@ -48,13 +48,13 @@ void ValueRefresh(void *parameter) {
         instWindAngle + 360;
       }
 
-      /** if (avgWindAngle >= 360) {
-         avgWindAngle = 0;
+      /**  if (avgWindAngle >= 360) {
+          avgWindAngle = 0;
         }
         avgWindAngle++;
 
         if (instWindAngle <= 0) {
-         instWindAngle = 360;
+          instWindAngle = 360;
         }
         instWindAngle--;**/
 
@@ -86,6 +86,8 @@ void ValueRefresh(void *parameter) {
           drawRectangle.drawRect(2, 2, 166, 37, RED);
           drawRectangle.drawRect(1, 1, 168, 39, RED);
           drawRectangle.drawRect(0, 0, 170, 41, RED);
+          drawRectangle.pushToSprite(&background, 55, 126 + offset, TFT_BLACK);
+          delay(50);
           drawRectangle.pushToSprite(&background, 55, 126 + offset, TFT_BLACK);
           drawRectangle.deleteSprite();
         }
@@ -136,6 +138,28 @@ void ValueRefresh(void *parameter) {
     //**************************
     //****  Refresh Values  ****
     //**************************
+
+    if ((valueWindAsInt == 1) && (valueAwdAsFloat != -1000)) {
+      offset = 0;
+    }
+    else {
+      offset = -24;
+    }
+    if (stf_mode_state == 0) {
+      if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE ) {
+        DrawInfo(nameOfField, WHITE, "large", "Avg.", valueVaaAsString, "", 34, 40, 94, 0, 88, 84 + offset); //+1
+        xSemaphoreGive(xTFTSemaphore);
+      }
+    }
+
+    if (stf_mode_state == 1) {
+      if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+      {
+        DrawInfo(nameOfField, WHITE, "large", "Net.", valueVanAsString, "", 34, 40, 94, 0, 88, 84 + offset);
+        xSemaphoreGive(xTFTSemaphore);
+      }
+    }
+
     if ((valueWindAsInt == 1) && (valueAwdAsFloat != -1000)) {
       if (valueCwsAsFloat >= 99) {
         valueCwsAsString = "99";
@@ -149,50 +173,17 @@ void ValueRefresh(void *parameter) {
         xSemaphoreGive(xTFTSemaphore);
       }
       if (valueCwdAsFloat != -1000) {
-        //if (cwsUpdated) {
         if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
         {
-          DrawInfo(nameOfField, GREEN, "small", "", valueCwsAsString, "", 0, 25, 30, 0, 140, 40);
-          //DrawInfo(nameOfField, GREEN, "small", "", "23", "", 0, 25, 33, 0, 150, 45);
+          DrawInfo(nameOfField, GREEN, "small", "", valueCwsAsString, "", 0, 25, 40, 0, 140, 40);
           //avsWasUpdated = true;
           //casWasUpdated = false;
           xSemaphoreGive(xTFTSemaphore);
-          //}
         }
       }
-      //if (awsWasUpdated) {
       if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
       {
-        DrawInfo(nameOfField, BLUE, "small", "", valueAwsAsString, "", 0, 25, 30, 0, 176, 40);
-        //DrawInfo(nameOfField, BLUE, "small", "", "12", "", 0, 25, 33, 0, 186, 45);
-        //cwsWasUpdated = true;
-        //awsWasUpdated = false;
-        xSemaphoreGive(xTFTSemaphore);
-      }
-    }
-
-    if ((valueWindAsInt == 1) && (valueAwdAsFloat != -1000)) {
-      offset = 0;
-    }
-    else {
-      offset = -24;
-    }
-    //if (vaaWasUpdated && stf_mode_state == 0) {
-    if (stf_mode_state == 0) {
-      if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE ) {
-        DrawInfo(nameOfField, WHITE, "large", "Avg.", valueVaaAsString, "", 34, 40, 94, 0, 88, 84 + offset); //+1
-        //vanWasUpdated = true;
-        //vaaWasUpdated = false;
-        xSemaphoreGive(xTFTSemaphore);
-      }
-    }
-    //if (vanWasUpdated && stf_mode_state == 1) {
-    if (stf_mode_state == 1) {
-      if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
-      {
-        DrawInfo(nameOfField, WHITE, "large", "Net.", valueVanAsString, "", 34, 40, 94, 0, 88, 84 + offset);
-        //vanWasUpdated = false;
-        //vaaWasUpdated = true;
+        DrawInfo(nameOfField, BLUE, "small", "", valueAwsAsString, "", 0, 25, 40, 0, 176, 40);
         xSemaphoreGive(xTFTSemaphore);
       }
     }
@@ -203,7 +194,7 @@ void ValueRefresh(void *parameter) {
     else {
       offset = -18;
     }
-    //if (tasWasUpdated || grsWasUpdated || requestMenuFontPaint ) {
+
     if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
     {
       if ((requestDrawMenuLevel == 1 ) && (requestDrawMenu == 1) || (requestDrawMenuLevel == 2 ) && (requestDrawMenu == 1)) {
@@ -212,11 +203,9 @@ void ValueRefresh(void *parameter) {
       else {
         DrawInfo(nameOfField, WHITE, "small", nameSpeed, valueSpeed, "km/h", 28, 25, 57, 68, 63, 136 + offset);
       }
-      //tasWasUpdated = false;
-      //grsWasUpdated = false;
       xSemaphoreGive(xTFTSemaphore);
     }
-    //}
+
 
     if ((valueWindAsInt == 1) && (valueAwdAsFloat != -1000)) {
       offset = 0;
@@ -224,7 +213,6 @@ void ValueRefresh(void *parameter) {
     else {
       offset = -12;
     }
-    //if (hagWasUpdated || higWasUpdated || requestMenuFontPaint) {
     if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
     {
       if ((requestDrawMenuLevel == 1 ) && (requestDrawMenu == 2) || (requestDrawMenuLevel == 2 ) && (requestDrawMenu == 2)) {
@@ -233,11 +221,9 @@ void ValueRefresh(void *parameter) {
       else {
         DrawInfo(nameOfField, WHITE, "small", nameHight, valueHight, "m", 31, 25, 74, 29, 82, 173 + offset);
       }
-      //hagWasUpdated = false;
-      //higWasUpdated = false;
       xSemaphoreGive(xTFTSemaphore);
     }
-    //}
+
 
     if ((valueWindAsInt == 1) && (valueAwdAsFloat != -1000)) {
       offset = 0;
@@ -245,7 +231,6 @@ void ValueRefresh(void *parameter) {
     else {
       offset = -6;
     }
-    //if (nameSetting == "MC" && (mcWasUpdated || requestFontRepaint)) {
     if (nameSetting == "MC") {
       if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
       {
@@ -256,11 +241,10 @@ void ValueRefresh(void *parameter) {
         else {
           DrawInfo(nameOfField, WHITE, "small", "MC", valueSetting, "m/s", 24, 25, 56, 53, 83, 210 + offset);
         }
-        //mcWasUpdated = false;
         xSemaphoreGive(xTFTSemaphore);
       }
     }
-    //else if (nameSetting == "QNH" && qnhWasUpdated) {
+
     else if (nameSetting == "QNH") {
       if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
       {
@@ -271,11 +255,10 @@ void ValueRefresh(void *parameter) {
         else {
           DrawInfo(nameOfField, WHITE, "small", "QNH", valueSetting, "", 50, 25, 82, 1, 83, 210 + offset);
         }
-        //qnhWasUpdated = false;
         xSemaphoreGive(xTFTSemaphore);
       }
     }
-    //else if (nameSetting == "Bug" && bugWasUpdated) {
+
     else if (nameSetting == "Bug") {
       if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
       {
@@ -286,11 +269,10 @@ void ValueRefresh(void *parameter) {
         else {
           DrawInfo(nameOfField, WHITE, "small", "Bug", valueSetting, "%", 39, 25, 63, 31, 83, 210 + offset);
         }
-        //bugWasUpdated = false;
         xSemaphoreGive(xTFTSemaphore);
       }
     }
-    //else if (nameSetting == "ATTEN" && attWasUpdated) {
+
     else if (nameSetting == "ATTEN") {
       if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
       {
@@ -301,11 +283,10 @@ void ValueRefresh(void *parameter) {
         else {
           DrawInfo(nameOfField, WHITE, "small", "ATT", valueSetting, "", 39, 25, 63, 31, 83, 210 + offset);
         }
-        //attWasUpdated = false;
         xSemaphoreGive(xTFTSemaphore);
       }
     }
-    //else if (nameSetting == "Mute" && muteWasUpdated) {
+
     else if (nameSetting == "Mute") {
       if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
       {
@@ -316,11 +297,10 @@ void ValueRefresh(void *parameter) {
         else {
           DrawInfo(nameOfField, WHITE, "small", "Mute", valueSetting, "", 39, 25, 63, 31, 83, 210 + offset);
         }
-        //muteWasUpdated = false;
         xSemaphoreGive(xTFTSemaphore);
       }
     }
-    //else if (nameSetting == "Wind" && windWasUpdated) {
+
     else if (nameSetting == "Wind") {
       if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
       {
@@ -331,24 +311,19 @@ void ValueRefresh(void *parameter) {
         else {
           DrawInfo(nameOfField, WHITE, "small", "Wind", valueSetting, "", 39, 25, 63, 31, 83, 210 + offset);
         }
-        //windWasUpdated = false;
         xSemaphoreGive(xTFTSemaphore);
       }
     }
 
-    //if (stfModeWasUpdate) {
     if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
     {
       DrawInfo(nameOfField, WHITE, "small", "Mode", stf_mode, "", 41, 25, 70, 0, 105, 248);
-      //stfModeWasUpdate = false;
       xSemaphoreGive(xTFTSemaphore);
     }
-    //}
     vTaskDelay(15);
     background.pushSprite(0, 0);
   }
   if (requestMenuPaint) {
     requestMenuPaint = false;
-    requestMenuFontPaint = false;
   }
 }

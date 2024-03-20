@@ -35,8 +35,8 @@ void setup() {
   server.serveStatic("/serverIndex", SPIFFS, "/display-update.html");
   server.serveStatic("/", SPIFFS, "/display-login.html");
 
-  xTaskCreate(SerialScan, "Serial Scan", 5000, NULL, 1, &SerialScanTask);
-  xTaskCreate(ValueRefresh, "Value Refresh", 5000, NULL, 1, &TaskValueRefresh);
+  xTaskCreate(SerialScan, "Serial Scan", 2048, NULL, 1, &SerialScanTask);
+  xTaskCreate(ValueRefresh, "Value Refresh", 4092, NULL, 1, &TaskValueRefresh);
 
   prefs.begin("settings", false);
   valueMuteAsInt = prefs.getUInt("Mute", 1);
@@ -58,11 +58,11 @@ void setup() {
   }
   
   if (valueWindAsInt == 0) {
-    valueMuteAsString = "OFF";
+    valueWindAsString = "OFF";
     windWasUpdated = true;
   }
   else if (valueWindAsInt == 1) {
-    valueMuteAsString = "ON";
+    valueWindAsString = "ON";
     windWasUpdated = true;
   }
 }

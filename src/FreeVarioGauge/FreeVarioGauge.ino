@@ -15,9 +15,7 @@
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /** ToDo
-    Performance verbessern
-    Menü testen
-    Gerät testen
+    Gerät und Menü mit Condor testen
     Treiber um Windinfo erweitern
     DrawData in Tab verschieben
 */
@@ -66,6 +64,8 @@ ESP32Encoder Vario_Enc;
 
 static TFT_eSPI tft = TFT_eSPI();
 TFT_eSprite nameOfField = TFT_eSprite(&tft);
+TFT_eSprite Name = TFT_eSprite(&tft);
+TFT_eSprite smallFont = TFT_eSprite(&tft);
 TFT_eSprite needleGreen = TFT_eSprite(&tft);
 TFT_eSprite needleBlue = TFT_eSprite(&tft);
 TFT_eSprite drawOuterLine = TFT_eSprite(&tft);
@@ -102,15 +102,15 @@ String soundIP = "";
 static String mod;
 static String mce;
 static String nameSetting = "QNH";
-static String nameSpeed = "GS";
-static String nameHight = "MSL";
+static String nameSpeed = "NA";
+static String nameHight = "NA";
 static String valueSetting, valueSpeed, valueHight;
 static String unitSpeed, unitHight, unitSetting;
 static String stf_mode;
 static String valueQnhAsString = "1013";
 static String valueBugAsString = "0";
-static String valueMuteAsString = "ON";
-static String valueWindAsString = "ON";
+static String valueMuteAsString = "NA";
+static String valueWindAsString = "NA";
 static String valueAttenAsString = "2";
 static String valueGrsAsString = "0";
 static String valueTasAsString = "0";
@@ -137,8 +137,8 @@ static float valueHagAsFloat = 0;
 static float valueHigAsFloat = 0;
 static float valueAwsAsFloat = -1000;
 static float valueCwsAsFloat = -1000;
-static float valueAwdAsFloat = 1;
-static float valueCwdAsFloat = 1;
+static float valueAwdAsFloat = -1000;
+static float valueCwdAsFloat = -1000;
 static float avgWindAngle = 0;
 static float instWindAngle = 0;
 static float valueHeaAsFloat = 0;
@@ -172,6 +172,8 @@ static bool muteWasUpdated = true;
 static bool windWasUpdated = true;
 static bool stfModeWasUpdate = true;
 static bool serial2Error = false;
+static bool loadMenuFont = true;
+static bool loadMenuArc = true;
 
 bool updatemode = false;
 bool showBootscreen = true;
@@ -195,6 +197,7 @@ const int MENU_VALUE_MUTE = 3;
 const int DEBOUNCE_DELAY = 20;
 int i = 0;
 int n = 0;
+int k = 0;
 int statusCode;
 int stf_mode_state;
 int spriteNameWidthSpeed, spriteValueWidthSpeed, spriteunitWidthSpeed;
@@ -202,18 +205,17 @@ int spriteNameWidthHight, spriteValueWidthHight, spriteunitWidthHight;
 int spriteNameWidthSetting, spriteValueWidthSetting, spriteunitWidthSetting;
 int startAngle, segmentDraw, segmentCount;
 int Wificount = 0;
-int valueMuteAsInt = 1;
-int valueAttenAsInt = 2;
-int valueWindAsInt = 1;
+int valueMuteAsInt;
+int valueAttenAsInt;
+int valueWindAsInt;
 int changeMode;
 int oldChangeMode;
 int offset = 0;
 int selectedMenu = MENU_SPEED_TYP;
 
-static int requestDrawMenu = 0;
+static int requestDrawMenu = 1;
 static int requestDrawMenuLevel = 0;
 static bool requestMenuPaint = false;
-static bool requestMenuFontPaint = false;
 
 static unsigned long lastTimeBoot = 0;
 static unsigned long lastTimeReady = 0;
@@ -225,43 +227,69 @@ unsigned long loopTime = 5000;
 //****  Draw ValueBoxes and Data  ****
 //************************************
 void DrawInfo(TFT_eSprite fontOfName, uint32_t color, String infoType, String spriteName, String value, String unit, int spriteNameWidth, int spriteValueHight, int spriteValueWidth, int spriteunitWidth, int x, int y) {
-  fontOfName.loadFont("micross15");
-  fontOfName.createSprite(spriteNameWidth, 25);
-  fontOfName.setTextColor(color, BLACK);
-  fontOfName.fillSprite(BLACK);
-  fontOfName.fillSprite(TFT_BLACK);
-  fontOfName.setTextSize(2);
-  fontOfName.setTextDatum(TR_DATUM);
-  fontOfName.drawString(spriteName, spriteNameWidth, 2);
-  fontOfName.pushToSprite(&background, x, y, TFT_BLACK);
-  fontOfName.deleteSprite();
-  fontOfName.unloadFont();
+  if (loadMenuFont) {
+    Name.loadFont("micross15");
+    loadMenuFont = false;
+  }
+  Name.createSprite(spriteNameWidth, 25);
+  Name.setTextColor(color, BLACK);
+  Name.fillSprite(BLACK);
+  Name.fillSprite(TFT_BLACK);
+  Name.setTextSize(2);
+  Name.setTextDatum(TR_DATUM);
+  Name.drawString(spriteName, spriteNameWidth, 2);
+  Name.pushToSprite(&background, x, y, TFT_BLACK);
+  Name.deleteSprite();
 
   if (infoType == "small") {
-    fontOfName.loadFont("micross30");
+    if (k == 1) {
+      smallFont.loadFont("micross30");
+    }
+    smallFont.createSprite(spriteValueWidth, spriteValueHight);
+    smallFont.setTextColor(color, BLACK);
+    smallFont.fillSprite(BLACK);
+    smallFont.fillSprite(TFT_BLACK);
+    smallFont.setTextSize(3);
+    smallFont.setTextDatum(TR_DATUM);
+    smallFont.drawString(value, spriteValueWidth, 2);
+    smallFont.pushToSprite(&background, x + spriteNameWidth, y, TFT_BLACK);
+    smallFont.deleteSprite();
+
+    smallFont.createSprite(spriteunitWidth + 5, 25);
+    smallFont.setTextColor(color, BLACK);
+    smallFont.fillSprite(BLACK);
+    smallFont.fillSprite(TFT_BLACK);
+    smallFont.setTextSize(3);
+    smallFont.setTextDatum(TR_DATUM);
+    smallFont.drawString(unit, spriteunitWidth, 2);
+    smallFont.pushToSprite(&background, x + spriteNameWidth + spriteValueWidth, y, TFT_BLACK);
+    smallFont.deleteSprite();
   }
-  else {
+
+  else if (infoType == "large") {
     fontOfName.loadFont("micross50");
+    fontOfName.createSprite(spriteValueWidth, spriteValueHight);
+    fontOfName.setTextColor(color, BLACK);
+    fontOfName.fillSprite(BLACK);
+    fontOfName.fillSprite(TFT_BLACK);
+    fontOfName.setTextSize(3);
+    fontOfName.setTextDatum(TR_DATUM);
+    fontOfName.drawString(value, spriteValueWidth, 2);
+    fontOfName.pushToSprite(&background, x + spriteNameWidth, y, TFT_BLACK);
+    fontOfName.deleteSprite();
+
+    fontOfName.createSprite(spriteunitWidth + 5, 25);
+    fontOfName.setTextColor(color, BLACK);
+    fontOfName.fillSprite(BLACK);
+    fontOfName.fillSprite(TFT_BLACK);
+    fontOfName.setTextSize(3);
+    fontOfName.setTextDatum(TR_DATUM);
+    fontOfName.drawString(unit, spriteunitWidth, 2);
+    fontOfName.pushToSprite(&background, x + spriteNameWidth + spriteValueWidth, y, TFT_BLACK);
+    fontOfName.deleteSprite();
   }
-
-  fontOfName.createSprite(spriteValueWidth, spriteValueHight);
-  fontOfName.setTextColor(color, BLACK);
-  fontOfName.fillSprite(BLACK);
-  fontOfName.fillSprite(TFT_BLACK);
-  fontOfName.setTextSize(3);
-  fontOfName.setTextDatum(TR_DATUM);
-  fontOfName.drawString(value, spriteValueWidth, 2);
-  fontOfName.pushToSprite(&background, x + spriteNameWidth, y, TFT_BLACK);
-  fontOfName.deleteSprite();
-
-  fontOfName.createSprite(spriteunitWidth + 5, 25);
-  fontOfName.setTextColor(color, BLACK);
-  fontOfName.fillSprite(BLACK);
-  fontOfName.fillSprite(TFT_BLACK);
-  fontOfName.setTextSize(3);
-  fontOfName.setTextDatum(TR_DATUM);
-  fontOfName.drawString(unit, spriteunitWidth, 2);
-  fontOfName.pushToSprite(&background, x + spriteNameWidth + spriteValueWidth, y, TFT_BLACK);
-  fontOfName.deleteSprite();
-  fontOfName.unloadFont();
+  k++;
+  if (k == 7) {
+    k = 0;
+  }
 }
