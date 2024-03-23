@@ -28,7 +28,8 @@ void ValueRefresh(void *parameter) {
     //*****************************************
     if ((valueWindAsInt == 1) && (valueAwdAsFloat != -1000)) {
 
-      avgWindAngle = (valueAwdAsFloat - 180) - valueHeaAsFloat;
+      //avgWindAngle = (valueAwdAsFloat - 180) - valueHeaAsFloat;
+      avgWindAngle = valueHeaAsFloat;
       if (avgWindAngle < 0) {
         avgWindAngle + 360;
       }
