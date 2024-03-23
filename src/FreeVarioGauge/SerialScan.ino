@@ -66,9 +66,6 @@ void SerialScan (void *p) {
       //****  analyse vertical speed  ****
       //**********************************
       if (variable == "VAR") {
-        if (var !=  wertAsFloat) {
-          varWasUpdated = true;
-        }
         var = wertAsFloat;
       }
 
@@ -76,9 +73,6 @@ void SerialScan (void *p) {
       //****  analyse average vertical speed  ****
       //******************************************
       else if (variable == "VAA") {
-        if (valueVaaAsFloat !=  wertAsFloat) {
-          vaaWasUpdated = true;
-        }
         valueVaaAsFloat = wertAsFloat;
         char buf[20];
         // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
@@ -96,9 +90,6 @@ void SerialScan (void *p) {
       //****  analyse netto vertical speed  ****
       //****************************************
       else if (variable == "VAN") {
-        if (valueVanAsFloat !=  wertAsFloat) {
-          vanWasUpdated = true;
-        }
         valueVanAsFloat = wertAsFloat;
         char buf[20];
         // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
@@ -116,10 +107,6 @@ void SerialScan (void *p) {
       //****  analyse internal McCready value  ****
       //*******************************************
       else if (variable == "MCI") {
-
-        if (valueMacAsFloat !=  wertAsFloat) {
-          mcWasUpdated = true;
-        }
         valueMacAsFloat = wertAsFloat;
         mci = true;
         char buf[20];
@@ -131,9 +118,6 @@ void SerialScan (void *p) {
       //****  analyse external McCready value  ****
       //*******************************************
       else if ((variable == "MCE") && (mci == false)) {
-        if (valueMacAsFloat !=  wertAsFloat) {
-          mcWasUpdated = true;
-        }
         valueMacAsFloat = wertAsFloat;
         char buf[20];
         // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
@@ -165,10 +149,6 @@ void SerialScan (void *p) {
       //****  analyse true airspeed  ****
       //*********************************
       else if (variable == "TAS") {
-
-        if (valueTasAsFloat != wertAsFloat) {
-          tasWasUpdated = true;
-        }
         valueTasAsFloat = wertAsFloat;
         char buf[20];
         // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
@@ -179,9 +159,6 @@ void SerialScan (void *p) {
       //****  analyse groundspeed  ****
       //*******************************
       else if (variable == "GRS") {
-        if (valueGrsAsFloat != wertAsFloat) {
-          grsWasUpdated = true;
-        }
         valueGrsAsFloat = wertAsFloat;
         char buf[20];
         // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
@@ -192,9 +169,6 @@ void SerialScan (void *p) {
       //****  analyse hight MSL  ****
       //*****************************
       else if (variable == "HIG") {
-        if (valueHigAsFloat != wertAsFloat) {
-          higWasUpdated = true;
-        }
         valueHigAsFloat = wertAsFloat;
         char buf[20];
         // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
@@ -205,9 +179,6 @@ void SerialScan (void *p) {
       //****  analyse hight about ground level  ****
       //********************************************
       else if (variable == "HAG") {
-        if (valueHagAsFloat != wertAsFloat) {
-          hagWasUpdated = true;
-        }
         valueHagAsFloat = wertAsFloat;
         char buf[20];
         // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
@@ -218,11 +189,7 @@ void SerialScan (void *p) {
       //****  analyse average wind strength  ****
       //*****************************************
       else if (variable == "AWS") {
-
-        if (valueAwsAsFloat != wertAsFloat) {
-          awsWasUpdated = true;
-        }
-        valueAwsAsFloat = wertAsFloat;
+        valueAwsAsFloat = wertAsFloat * 3.6;
         char buf[20];
         // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
         valueAwsAsString = dtostrf(valueAwsAsFloat, 3, 0, buf);
@@ -232,11 +199,7 @@ void SerialScan (void *p) {
       //****  analyse current wind strength  ****
       //*****************************************
       else if (variable == "CWS") {
-
-        if (valueCwsAsFloat != wertAsFloat) {
-          cwsWasUpdated = true;
-        }
-        valueCwsAsFloat = wertAsFloat;
+        valueCwsAsFloat = wertAsFloat * 3.6;
         char buf[20];
         // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
         valueCwsAsString = dtostrf(valueCwsAsFloat, 3, 0, buf);
@@ -246,10 +209,6 @@ void SerialScan (void *p) {
       //****  analyse average wind direction  ****
       //******************************************
       else if (variable == "AWD") {
-
-        if (valueAwdAsFloat != wertAsFloat) {
-          awdWasUpdated = true;
-        }
         valueAwdAsFloat = wertAsFloat;
       }
 
@@ -257,21 +216,13 @@ void SerialScan (void *p) {
       //****  analyse current wind direction  ****
       //******************************************
       else if (variable == "CWD") {
-
-        if (valueCwdAsFloat != wertAsFloat) {
-          cwdWasUpdated = true;
-        }
         valueCwdAsFloat = wertAsFloat;
       }
-
+      
       //***************************
       //****  analyse heading  ****
       //***************************
       else if (variable == "HEA") {
-
-        if (valueHeaAsFloat != wertAsFloat) {
-          heaWasUpdated = true;
-        }
         valueHeaAsFloat = wertAsFloat;
       }
 
@@ -279,9 +230,6 @@ void SerialScan (void *p) {
       //****  analyse temperatur  ****
       //******************************
       else if (variable == "TEM") {
-        if (tem != wertAsFloat) {
-          tempWasUpdated = true;
-        }
         tem = wertAsFloat;
       }
 
@@ -289,9 +237,6 @@ void SerialScan (void *p) {
       //****  analyse QNH  ****
       //***********************
       else if (variable == "QNH") {
-        if ((valueQnhAsFloat != wertAsFloat) && (wertAsFloat < 2000)) {
-          qnhWasUpdated = true;
-        }
         valueQnhAsFloat = wertAsFloat;
         valueQnhAsString = String(valueQnhAsFloat, 0);
       }
@@ -300,9 +245,6 @@ void SerialScan (void *p) {
       //****  analyse bug  ****
       //***********************
       else if (variable == "BUG") {
-        if (valueBugAsFloat != wertAsFloat) {
-          bugWasUpdated = true;
-        }
         valueBugAsFloat = wertAsFloat;
         valueBugAsString = String(valueBugAsFloat, 0);
       }
@@ -311,7 +253,6 @@ void SerialScan (void *p) {
       //****  analyse Mute  ****
       //************************
       else if (variable == "MUT") {
-        muteWasUpdated = true;
         valueMuteAsInt = wert.toInt();
       }
 
@@ -319,7 +260,6 @@ void SerialScan (void *p) {
       //****  analyse Attenuation  ****
       //*******************************
       else if (variable == "ATT") {
-        attWasUpdated = true;
         valueAttenAsInt = wert.toInt();
       }
     }

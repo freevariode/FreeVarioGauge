@@ -50,20 +50,16 @@ void setup() {
 
   if (valueMuteAsInt == 0) {
     valueMuteAsString = "OFF";
-    muteWasUpdated = true;
   }
   else if (valueMuteAsInt == 1) {
     valueMuteAsString = "ON";
-    muteWasUpdated = true;
   }
   
   if (valueWindAsInt == 0) {
     valueWindAsString = "OFF";
-    windWasUpdated = true;
   }
   else if (valueWindAsInt == 1) {
     valueWindAsString = "ON";
-    windWasUpdated = true;
   }
 }
 

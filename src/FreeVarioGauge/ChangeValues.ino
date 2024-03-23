@@ -12,17 +12,14 @@ void changeMCvalue(bool mcUp) {
     Serial2.println("$PFV,M,D*49");  //McCready Down
   }
   nameSetting = "MC";
-  mcWasUpdated = true;
 }
 
 void changeSpeedOption () {
   if (nameSpeed == "TAS") {
     nameSpeed = "GS";
-    grsWasUpdated = true;
   }
   else {
     nameSpeed = "TAS";
-    tasWasUpdated = true;
   }
   prefs.begin("settings", false);
   prefs.putString("nameSpeed", nameSpeed);
@@ -32,11 +29,9 @@ void changeSpeedOption () {
 void changeHighOption () {
   if (nameHight == "AGL") {
     nameHight = "MSL";
-    higWasUpdated = true;
   }
   else {
     nameHight = "AGL";
-    hagWasUpdated = true;
   }
   prefs.begin("settings", false);
   prefs.putString("nameHight", nameHight);
@@ -46,47 +41,37 @@ void changeHighOption () {
 void changeValueOptionRight () {
   if ( nameSetting == "Bug") {
     nameSetting = "ATTEN";
-    attWasUpdated = true;
   }
   else if ( nameSetting == "QNH") {
     nameSetting = "Bug";
-    bugWasUpdated = true;
   }
   else if ( nameSetting == "ATTEN") {
     nameSetting = "Mute";
-    muteWasUpdated = true;
   }
   else if ( nameSetting == "Mute") {
     nameSetting = "Wind";
-    windWasUpdated = true;
   }
 
   else if ( nameSetting == "Wind") {
     nameSetting = "QNH";
-    qnhWasUpdated = true;
   }
 }
 
 void changeValueOptionLeft () {
   if ( nameSetting == "Bug") {
     nameSetting = "QNH";
-    qnhWasUpdated = true;
   }
   else if ( nameSetting == "QNH") {
     nameSetting = "Wind";
-    windWasUpdated = true;
   }
   else if ( nameSetting == "ATTEN") {
     nameSetting = "Bug";
-    bugWasUpdated = true;
   }
   else if ( nameSetting == "Mute") {
     nameSetting = "ATTEN";
-    attWasUpdated = true;
   }
   else if ( nameSetting == "Wind") {
     nameSetting = "Mute";
-    muteWasUpdated = true;
   }
 }
 void changeLevelTwoMenu (bool changeLevelTwoValue) {
@@ -102,7 +87,6 @@ void changeLevelTwoMenu (bool changeLevelTwoValue) {
     char buf[20];
     // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
     valueQnhAsString = dtostrf(valueQnhAsFloat, 4, 0, buf);
-    qnhWasUpdated = true;
     Serial2.printf("%s%X\n", qnhStr.c_str(), checksum);                //send QNH to XCSoar
   }
 
@@ -118,7 +102,6 @@ void changeLevelTwoMenu (bool changeLevelTwoValue) {
     char buf[20];
     // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
     valueBugAsString = dtostrf(valueBugAsFloat, 2, 0, buf);
-    bugWasUpdated = true;
     Serial2.printf("%s%X\n", bugStr.c_str(), checksum);                //send bug to XCSoar
   }
   if (nameSetting == "ATTEN") {
@@ -132,7 +115,6 @@ void changeLevelTwoMenu (bool changeLevelTwoValue) {
     prefs.begin("settings", false);
     prefs.putUInt("ATTEN", valueAttenAsInt);
     prefs.end();
-    attWasUpdated = true;
     String attStr = ("$PFV,A,S," + valueAttenAsString + "*");
     int checksum = calculateChecksum(attStr);
     char buf[20];
@@ -153,7 +135,6 @@ void changeLevelTwoMenuTurn (bool changeLevelTwoValue) {
     prefs.begin("settings", false);
     prefs.putUInt("Mute", valueMuteAsInt);
     prefs.end();
-    muteWasUpdated = true;
     String muteStr = ("$PFV,S,S," + String(valueMuteAsInt) + "*");
     int checksum = calculateChecksum(muteStr);
     char buf[20];
@@ -172,7 +153,6 @@ void changeLevelTwoMenuTurn (bool changeLevelTwoValue) {
     prefs.begin("settings", false);
     prefs.putUInt("Wind", valueWindAsInt);
     prefs.end();
-    windWasUpdated = true;
     String windStr = ("$PFV,S,S," + String(valueWindAsInt) + "*");
     int checksum = calculateChecksum(windStr);
     char buf[20];

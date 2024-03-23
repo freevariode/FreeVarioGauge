@@ -10,12 +10,10 @@ void setDrawMenuLevel(int selectedMenuNumber, int level) {
 
 void settingStartValueType () {
   nameSetting = "QNH";
-  qnhWasUpdated = true;
 }
 
 void settingStandardValueType () {
   nameSetting = "MC";
-  mcWasUpdated = true;
 }
 
 void Menu () {

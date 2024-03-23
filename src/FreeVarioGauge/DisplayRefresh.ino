@@ -27,36 +27,15 @@ void ValueRefresh(void *parameter) {
     //****  Calculate and Refresh Needles  ****
     //*****************************************
     if ((valueWindAsInt == 1) && (valueAwdAsFloat != -1000)) {
-      /**
-        //Formel, falls OpenSoar angibt, wo der Wind her kommt
-        avgWindAngle = valueAwdAsFloat - valueHeaAsFloat;
-        if (avgWindAngle < 0) {
-        avgWindAngle + 360;
-        }
-        instWindAngle = valueCwdAsFloat - valueHeaAsFloat;
-        if (instWindAngle < 0) {
-        instWindAngle + 360;
-        }**/
 
-      //Formel, falls OpenSoar angibt, wohin der Wind weht
-      avgWindAngle = valueHeaAsFloat - valueAwdAsFloat + 180;
+      avgWindAngle = (valueAwdAsFloat - 180) - valueHeaAsFloat;
       if (avgWindAngle < 0) {
         avgWindAngle + 360;
       }
-      instWindAngle = valueHeaAsFloat - valueCwdAsFloat + 180;
+      instWindAngle = (valueCwdAsFloat - 180) - valueHeaAsFloat;
       if (instWindAngle < 0) {
         instWindAngle + 360;
       }
-
-      /**  if (avgWindAngle >= 360) {
-          avgWindAngle = 0;
-        }
-        avgWindAngle++;
-
-        if (instWindAngle <= 0) {
-          instWindAngle = 360;
-        }
-        instWindAngle--;**/
 
       needleGreen.createSprite(20, 130);
       needleGreen.drawWedgeLine(11, 0, 11, 130, 1, 10, BLUE);
