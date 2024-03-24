@@ -43,6 +43,7 @@ void ValueRefresh(void *parameter) {
       if (valueCwdAsFloat != -1000) {
         needleBlue.createSprite(20, 130);
         needleBlue.drawWedgeLine(11, 0, 11, 130, 1, 10, GREEN);
+        needleGreen.pushRotated(&background, valueCwdAsFloat, TFT_BLACK);
       }
     }
 
