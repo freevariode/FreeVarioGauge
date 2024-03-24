@@ -28,24 +28,21 @@ void ValueRefresh(void *parameter) {
     //*****************************************
     if ((valueWindAsInt == 1) && (valueAwdAsFloat != -1000)) {
 
-      //avgWindAngle = (valueAwdAsFloat - 180) - valueHeaAsFloat;
-      avgWindAngle = valueHeaAsFloat;
-      if (avgWindAngle < 0) {
-        avgWindAngle + 360;
+      if (valueAwdAsFloat < 0) {
+        valueAwdAsFloat + 360;
       }
-      instWindAngle = (valueCwdAsFloat - 180) - valueHeaAsFloat;
-      if (instWindAngle < 0) {
-        instWindAngle + 360;
+
+      if (valueCwdAsFloat < 0) {
+        valueCwdAsFloat + 360;
       }
 
       needleGreen.createSprite(20, 130);
       needleGreen.drawWedgeLine(11, 0, 11, 130, 1, 10, BLUE);
-      needleGreen.pushRotated(&background, avgWindAngle, TFT_BLACK);
+      needleGreen.pushRotated(&background, valueAwdAsFloat, TFT_BLACK);
 
       if (valueCwdAsFloat != -1000) {
         needleBlue.createSprite(20, 130);
         needleBlue.drawWedgeLine(11, 0, 11, 130, 1, 10, GREEN);
-        needleBlue.pushRotated(&background, instWindAngle, TFT_BLACK);
       }
     }
 

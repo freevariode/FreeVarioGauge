@@ -218,13 +218,6 @@ void SerialScan (void *p) {
       else if (variable == "CWD") {
         valueCwdAsFloat = wertAsFloat;
       }
-      
-      //***************************
-      //****  analyse heading  ****
-      //***************************
-      else if (variable == "HEA") {
-        valueHeaAsFloat = wertAsFloat;
-      }
 
       //******************************
       //****  analyse temperatur  ****
