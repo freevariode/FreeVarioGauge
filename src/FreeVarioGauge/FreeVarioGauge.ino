@@ -15,7 +15,6 @@
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /** ToDo
-    Bug und QNH werden vom FV nicht immer erkannt wenn XCSoar sie schickt
     Handbuch und ggf. Anleitung ergönzen
     Images neu erstellen und hochladen
     Github und Download Area aktuallisieren
