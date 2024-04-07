@@ -1,0 +1,30 @@
+name: Build FreeVarioGauge
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Arduino-CLI
+        run: |
+          python3 -m pip install pyserial
+          curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+          bin/arduino-cli config init
+          bin/arduino-cli core update-index
+      - name: Install ESP32
+        run: bin/arduino-cli core install esp32:esp32
+      - name: Install Libraries
+        run: |
+          bin/arduino-cli lib install Streaming TFT_eSPI ESP32Encoder
+      - name: Build
+        run: |
+          bin/arduino-cli compile --fqbn esp32:esp32:esp32doit-devkit-v1 $GITHUB_WORKSPACE/src/FreeVarioGauge/FreeVarioGauge.ino
