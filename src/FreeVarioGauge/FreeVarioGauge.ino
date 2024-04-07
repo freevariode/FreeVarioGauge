@@ -15,10 +15,6 @@
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /** ToDo
-    Bug und QNH werden vom FV nicht immer erkannt wenn XCSoar sie schickt
-    Handbuch und ggf. Anleitung ergönzen
-    Images neu erstellen und hochladen
-    Github und Download Area aktuallisieren
     Ton durch ESP erzeugen lassen  
 */
 
@@ -83,7 +79,7 @@ SemaphoreHandle_t xTFTSemaphore;
 long NOT_SET = -1;
 long pushButtonPressTime = NOT_SET;
 
-const String SOFTWARE_VERSION = "  V2.1 - 2024";
+const String SOFTWARE_VERSION = "  V2.0 - 2024";
 
 const char *host = "FreeVario_Displayboard";
 const char *ssid = "FV_Displayboard";
