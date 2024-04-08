@@ -1,3 +1,5 @@
+![FreeVarioGauge Build](https://github.com/freevariode/FreeVarioGauge/actions/workflows/build_FreeVarioGauge.yml/badge.svg)
+
 # FreeVarioGauge
 
 New in V1.2:
