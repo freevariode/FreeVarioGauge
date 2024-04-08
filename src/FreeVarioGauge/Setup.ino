@@ -6,7 +6,7 @@ void setup() {
   //***********************************************
   //****  Enable the weak pull down resistors  ****
   //***********************************************
-  ESP32Encoder::useInternalWeakPullResistors = DOWN;
+  ESP32Encoder::useInternalWeakPullResistors = puType::down;
 
   if ( xTFTSemaphore == NULL )
   { xTFTSemaphore = xSemaphoreCreateMutex();
