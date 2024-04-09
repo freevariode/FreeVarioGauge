@@ -1,22 +1,69 @@
 ![FreeVarioGauge Build](https://github.com/freevariode/FreeVarioGauge/actions/workflows/build_FreeVarioGauge.yml/badge.svg)
 
-# FreeVarioGauge
+# FreeVario.de
+</br>
+ 
+### New in V2.0:
 
-New in V1.2:
+- Wind direction and strength of the external wind (Larus, Anemoi, etc.) is displayed
 
-– Both ESPs could be updated using WiFi (OTA)
+- if this is not available, the wind calculated by XCSoar is displayed
+
+- Function can be deactivated in the menu
+
+- the FreeVario can now also be used as a standalone device for Larus. It can be connected directly to the Larus without XCSoar 
+
+- A FreeVario image with OpenSoar is required for OpenVario larger than 24096
+
+- The official OpenSoar image does not yet support the feature. But that will come soon.
+
+- With a FreeVario version lower than 1.2.2, the data folders for the sound board and the graphics board must also be re-uploaded!
+ </br>
+ 
+### New in V1.3:
+ 
+- Bugfix: Mosquito value was not displayed correctly
+</br>
+
+### New in V 1.2.3:
+
+- In STF mode, net Vario is now shown at the top of the display, and in Vario mode the average climb is shown. The image for the OpenVario must be larger than 23313!
+</br>
+
+### New in V 1.2.2:
+
+- Revision of the web interface for updates
+
+- IMPORTANT!! After the update to V 1.2.2, the two data folders must be reloaded into the memory of the display and soundboard
+</br>
+
+### New in V 1.2.1:
+
+- the update of the two ESPs can now be carried out even more easily via the WiFi (OTA)
+
+- IMPORTANT!! After updating to V 1.2.1, the folder data must be reloaded into the display board’s memory
+
+- See the assembly instructions, Chapter III, variant 1, from point 17
+</br>
+
+### New in V1.2:
+
+- Both ESPs could be updated using WiFi (OTA)
+</br>
+
+### New in V1.1.5 (OpenVario image from FreeVario.de at least 22193 required):
+
+- Attenuation (ATT) adjustable in the menu between 0 and 3
+
+- Altitude and speed settings, as well as damping rate and mute settings are stored in the device
+
+- After the OpenVario crashes, the devices synchronize again
 
 
-New in V1.1.5 (OpenVario image from FreeVario.de at least 22193 required):
+##
+</br>
 
-– Attenuation (ATT) adjustable in the menu between 0 and 3
-
-– Altitude and speed settings, as well as damping rate and mute settings are stored in the device
-
-– After the OpenVario crashes, the devices synchronize again
-
-
-IMPORTANT - PTT and mute function
+### IMPORTANT - PTT and mute function
 
 If you want to use the FreeVario's mute function, you need to have at least the FreeVario image from 20295 installed on your OpenVario. In addition, at least firmware V.1.1.1 must be installed on the sound board as well as on the display board. If you are using the sound board with the 3-pin connector on the back, but without the diode D1, a small change has to be made here. Please write me about this by email (dirk@freevario.de).
 
