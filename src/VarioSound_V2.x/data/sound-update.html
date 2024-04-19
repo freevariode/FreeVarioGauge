@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Software-Update for the Soundboard</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+	<body>
+		<main>
+			<h1>Software-Update for the Soundboard</h1>
+			<p>Installed firmware version: <span id="SoftwareVersion"></span></p>
+			
+			<section>
+
+				<form id="updateform" class="background" method="POST" action="update" enctype="multipart/form-data">
+					<fieldset>
+						<legend>Firmware Update</legend>
+						<label class="name" for="updatefile">Firmware file</label>
+						<div class="fileinput">
+							<input type="file" name="update" id="updatefile" required>
+							<label class="select" for="updatefile">Select…</label>
+							<div class="filename">No file selected.</div>
+						</div>
+						<label class="tip" for="updatefile">
+ 							Please make sure to select the correct firmware binary file. Its name should be 
+ 							»VarioSound.ino.bin«.
+ 						</label>
+ 						<label class="tip" for="updatefile">
+ 							Only use official firmware that you downloaded from our website. Uploading other files may
+ 							make the device unusable.
+ 						</label>
+					</fieldset>
+					
+					<button type="submit" class="submitbar" data-status="save" data-progress="0">
+						<div class="status save">Upload Firmware</div>
+						<div class="status completed">Upload completed.</div>
+						<div class="status failed">Upload failed!</div>
+						<div class="status saving">Uploading…</div>
+						<div class="progress"><span class="percent">0</span> %</div>
+					</button>
+				</form>
+			</section>
+		</main>
+	</body>
+	<script src="script.js"></script>
+</html>

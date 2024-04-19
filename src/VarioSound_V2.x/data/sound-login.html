@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Soundboard Login Page</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+	<body>
+		<main>
+			<h1>Soundboard Login Page</h1>
+
+			<section>
+				<form class="checkform" action="/serverIndex" method="GET">
+					<fieldset>
+						<legend>Warning</legend>
+
+						<p>
+ 							You are about to enter the FreeVario firmware update menu for the Soundboard. Please mind that faulty settings
+ 							or firmware updates could break the device. Double-check anything you do!
+ 							Please confirm that you know what you are doing by entering "Sound" in the field below.
+ 						</p>
+
+						<label class="name">I know what i’m doing!</label>
+ 						<input type="text" name="check" id="check" pattern="Sound" placeholder="Sound" required>
+
+ 						<button type="submit" class="submitbar" data-status="save">Sign in</button>
+ 					</fieldset>
+				</form>
+
+			</section>
+		</main>
+	</body>
+	<script src="script.js"></script>
+</html>
