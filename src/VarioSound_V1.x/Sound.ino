@@ -15,7 +15,7 @@ void Sound(void *) {
     /////////////////////
     // calculate Vario sound
     /////////////////////
-    else if (digitalRead(STF_MODE) == LOW && var > 0.5) {
+    else if (digitalRead(STF_MODE) == LOW && var > 0.5 && startSound) {
       startTimePulse = millis();
       pulseTime = 0;
       while (pulseTime < calculatePulse(var)) {
@@ -42,7 +42,7 @@ void Sound(void *) {
         pulseTime = millis() - startTimePulse;
       } while (pulseTime < (calculatePulse(var) + (calculatePulse(var) / 2)));
     }
-    else if (digitalRead(STF_MODE) == LOW && var <= 0.5) {
+    else if (digitalRead(STF_MODE) == LOW && var <= 0.5 && startSound) {
       calculateNewFreq(var, varOld);
       int  i = 0;
       while (i < 8) {
@@ -57,7 +57,7 @@ void Sound(void *) {
     /////////////////////
     // calculate STF sound
     /////////////////////
-    else if (digitalRead(STF_MODE) == HIGH && ((sf > 1) || (sf < -1))) {
+    else if (digitalRead(STF_MODE) == HIGH && ((sf > 1) || (sf < -1)) && startSound) {
       if ((count = 0) || (pulseTime > 1050)) {
         startTimePulse = millis();
         pulseTime = 0;
@@ -90,8 +90,11 @@ void Sound(void *) {
       count = 0;
     }
 
-    else if (digitalRead(STF_MODE) == HIGH && sf > -1 && sf < 1) {
+    else if (digitalRead(STF_MODE) == HIGH && sf > -1 && sf < 1 && startSound) {
       gen.ApplySignal(SINE_WAVE, REG0, 0);
+      delay(1);
+    }
+    else {
       delay(1);
     }
   }

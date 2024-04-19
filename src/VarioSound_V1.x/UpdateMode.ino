@@ -1,5 +1,5 @@
 void UpdateMode() {
-  
+
   /////////////////////
   // Check for update mode
   /////////////////////
@@ -24,7 +24,19 @@ void UpdateMode() {
       loopTime = 0;
       updatemode = true;
       long toneTime = millis();
+      while (millis() - toneTime <= 150) {
+        gen.ApplySignal(SINE_WAVE, REG0, 600);
+      }
       while (millis() - toneTime <= 200) {
+        gen.ApplySignal(SINE_WAVE, REG0, 0);
+      }
+      while (millis() - toneTime <= 350) {
+        gen.ApplySignal(SINE_WAVE, REG0, 800);
+      }
+      while (millis() - toneTime <= 400) {
+        gen.ApplySignal(SINE_WAVE, REG0, 0);
+      }
+      while (millis() - toneTime <= 550) {
         gen.ApplySignal(SINE_WAVE, REG0, 1000);
       }
       gen.ApplySignal(SINE_WAVE, REG0, 0);

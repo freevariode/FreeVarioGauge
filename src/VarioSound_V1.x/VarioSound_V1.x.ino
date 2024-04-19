@@ -40,7 +40,7 @@ const int Varioschalter = 15;         // Connect button to GND, connect 10 kOhm 
 const int STFSchalter = 5;            // Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
 const int STFAuto = 19;               // Flap connection; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin´
 
-const String SOFTWARE_VERSION = "  V2.0 - 2024";
+const String SOFTWARE_VERSION = "  V2.1 - 2024";
 
 const char *host = "FreeVario_Soundboard";
 const char *ssid = "FV_Soundboard";
@@ -74,6 +74,7 @@ bool error = false;
 bool updatemode = false;
 bool SourceIsXCSoar = false;
 bool SourceIsLarus = false;
+bool startSound = false;
 
 float sf = 0;
 float stfValue = 0;                        // Speed to Fly value

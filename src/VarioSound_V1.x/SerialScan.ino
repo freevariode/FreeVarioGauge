@@ -13,6 +13,7 @@ void SerialScan () {
           DataString += Data;
           Data = Serial2.read();
         }
+        startSound = true;
         //Serial.println(DataString);
       }
       else {
