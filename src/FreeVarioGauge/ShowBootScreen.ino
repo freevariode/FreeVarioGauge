@@ -14,7 +14,7 @@ void showBootScreen(String versionString) {
   bootSprite.setCursor(0, 2);
   bootSprite.setTextColor(GREY, BLACK);
   tft.fillScreen(WHITE);
-  tft.pushImage(40,55, 194, 156,logoOV);
+  drawLogo();
   bootSprite.println(versionString);
   bootSprite.pushSprite(40, 245);
   bootSprite.deleteSprite();
@@ -86,4 +86,21 @@ void showBootScreen(String versionString) {
     lastTimeReady = millis();
     showBootscreen = false;
   }
+}
+
+void drawLogo() {
+
+  fs::File bmpFS;
+
+  if (SPIFFS.exists("/FreeVario_194x156.bmp")) {
+    bmpFS = SPIFFS.open("/FreeVario_194x156.bmp", "r");
+    drawBmp(bmpFS, 40, 55);
+    bmpFS.close();
+  } else {
+      Serial.println("Logo not found. Using deprecated LogoOV. Update of SPIFFS required.");
+      tft.pushImage(40,55, 194, 156,logoOV);
+      return;
+  } 
+
+
 }
