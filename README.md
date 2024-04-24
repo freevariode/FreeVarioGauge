@@ -2,6 +2,12 @@
 
 # FreeVario.de
 </br>
+### New in V2.1:
+
+– improving sound if entering update mode
+
+– prepare VarioSound for hardware version 2.0
+ </br>
  
 ### New in V2.0:
 
