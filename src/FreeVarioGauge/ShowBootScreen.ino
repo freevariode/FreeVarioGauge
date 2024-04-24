@@ -10,10 +10,10 @@ void showBootScreen(String versionString) {
   TFT_eSprite bootSprite = TFT_eSprite(&tft);
   bootSprite.loadFont("micross20_boot");
   bootSprite.createSprite(195, 25);
-  bootSprite.fillSprite(WHITE);
+  bootSprite.fillSprite(TFT_WHITE);
   bootSprite.setCursor(0, 2);
-  bootSprite.setTextColor(GREY, BLACK);
-  tft.fillScreen(WHITE);
+  bootSprite.setTextColor(TFT_DARKGREY, TFT_BLACK);
+  tft.fillScreen(TFT_WHITE);
   drawLogo();
   bootSprite.println(versionString);
   bootSprite.pushSprite(40, 245);
@@ -28,10 +28,10 @@ void showBootScreen(String versionString) {
       loopTime = millis() + 500;
       bootSprite.loadFont("micross20_boot");
       bootSprite.createSprite(195, 25);
-      bootSprite.fillSprite(WHITE);
+      bootSprite.fillSprite(TFT_WHITE);
       bootSprite.setCursor(0, 2);
-      bootSprite.setTextColor(GREY, BLACK);
-      tft.fillScreen(WHITE);
+      bootSprite.setTextColor(TFT_DARKGREY, TFT_BLACK);
+      tft.fillScreen(TFT_WHITE);
       tft.setWindow(40, 55, 40 + 193, 55 + 155);
       tft.pushColors(logoOV, 194 * 156);
       bootSprite.println("starting Update Mode");
@@ -43,7 +43,7 @@ void showBootScreen(String versionString) {
   if (updatemode == false) {
     WiFi.mode(WIFI_OFF);
     bootSprite.createSprite(195, 25);
-    bootSprite.fillSprite(WHITE);
+    bootSprite.fillSprite(TFT_WHITE);
     bootSprite.setCursor(0, 2);
     bootSprite.println(waitingMessage);
     bootSprite.pushSprite(40, 245);

@@ -85,7 +85,7 @@ void fillArc(int x, int y, int start_angle, int seg_count, int rx, int ry, int w
     if ((B >= 0)) {
       if (x0 < 150) {
         drawColoredArc.createSprite(x2 - x1 + 20, y0 - y3 + 10);
-        drawColoredArc.setTextColor(WHITE, GREY);
+        drawColoredArc.setTextColor(TFT_WHITE, TFT_DARKGREY);
         drawColoredArc.fillSprite(TFT_BLACK);
         drawColoredArc.fillTriangle(x0 - x1, y0 - y3, 0, y1 - y3, x2 - x1, y2 - y3, color);
         drawColoredArc.fillTriangle(0, y1 - y3, x2 - x1, y2 - y3, x3 - x1, 0, color);
@@ -94,7 +94,7 @@ void fillArc(int x, int y, int start_angle, int seg_count, int rx, int ry, int w
       }
       if (x0 > 150) {
         drawColoredArc.createSprite(x3 - x0 + 20, y2 - y1 + 10);
-        drawColoredArc.setTextColor(WHITE, GREY);
+        drawColoredArc.setTextColor(TFT_WHITE, TFT_DARKGREY);
         drawColoredArc.fillSprite(TFT_BLACK);
         drawColoredArc.fillTriangle(0, y0 - y1, x1 - x0, 0, x2 - x0, y2 - y1, color);
         drawColoredArc.fillTriangle(x1 - x0, 0, x2 - x0, y2 - y1, x3 - x0, y3 - y1, color);
@@ -105,7 +105,7 @@ void fillArc(int x, int y, int start_angle, int seg_count, int rx, int ry, int w
     else if (B < 0) {
       if (x0 < 150) {
         drawColoredArc.createSprite(x2 - x1 + 20, y3 - y0 + 10);
-        drawColoredArc.setTextColor(WHITE, GREY);
+        drawColoredArc.setTextColor(TFT_WHITE, TFT_DARKGREY);
         drawColoredArc.fillSprite(TFT_BLACK);
         drawColoredArc.fillTriangle(x0 - x1, 0, 0, y1 - y0, x2 - x1, y2 - y0, color);
         drawColoredArc.fillTriangle(0, y1 - y0, x2 - x1, y2 - y0, x3 - x1, y3 - y0, color);
@@ -114,7 +114,7 @@ void fillArc(int x, int y, int start_angle, int seg_count, int rx, int ry, int w
       }
       if (x0 > 150) {
         drawColoredArc.createSprite(x3 - x0 + 20, y1 - y2 + 20);
-        drawColoredArc.setTextColor(WHITE, GREY);
+        drawColoredArc.setTextColor(TFT_WHITE, TFT_DARKGREY);
         drawColoredArc.fillSprite(TFT_BLACK);
         drawColoredArc.fillTriangle(0, y0 - y2, x1 - x0, y1 - y2, x2 - x0, 0, color);
         drawColoredArc.fillTriangle(x1 - x0, y1 - y2, x2 - x0, 0, x3 - x0, y3 - y2, color);
@@ -165,12 +165,12 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
   if (B >= 0) {
     startAngle = 270;
     segmentDraw = segmentCount;
-    color = GREEN;
+    color = TFT_GREEN;
   }
   else if (B < 0) {
     startAngle = 270;
     segmentDraw = segmentCount;
-    color = RED;
+    color = TFT_RED;
   }
 
   //***************************************
@@ -190,9 +190,9 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
     int x1 = (MiddleRadius + 10) * cos(divangle) + xCenter;
     int y1 = (MiddleRadius + 10) * sin(divangle) + yCenter;
     drawOuterLine.createSprite(30, 30);
-    drawOuterLine.setTextColor(WHITE, GREY);
+    drawOuterLine.setTextColor(TFT_WHITE, TFT_DARKGREY);
     drawOuterLine.fillSprite(TFT_BLACK);
-    drawOuterLine.drawLine(0 + 10, 0 + 10, x1 - x0 + 10, y1 - y0 + 10, WHITE);
+    drawOuterLine.drawLine(0 + 10, 0 + 10, x1 - x0 + 10, y1 - y0 + 10, TFT_WHITE);
     drawOuterLine.pushToSprite(&background, x0 - 10, y0 - 10, TFT_BLACK);
     drawOuterLine.deleteSprite();
 
@@ -203,7 +203,7 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
   }
 
   number.createSprite(20, 25);
-  number.setTextColor(WHITE, GREY);
+  number.setTextColor(TFT_WHITE, TFT_DARKGREY);
   number.fillSprite(TFT_BLACK);
   number.setTextSize(2);
   number.setTextDatum(TR_DATUM);
@@ -212,7 +212,7 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
   number.deleteSprite();
 
   number.createSprite(20, 25);
-  number.setTextColor(WHITE, GREY);
+  number.setTextColor(TFT_WHITE, TFT_DARKGREY);
   number.fillSprite(TFT_BLACK);
   number.setTextSize(2);
   number.setTextDatum(TR_DATUM);
@@ -221,7 +221,7 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
   number.deleteSprite();
 
   number.createSprite(20, 25);
-  number.setTextColor(WHITE, GREY);
+  number.setTextColor(TFT_WHITE, TFT_DARKGREY);
   number.fillSprite(TFT_BLACK);
   number.setTextSize(2);
   number.setTextDatum(TR_DATUM);
@@ -230,7 +230,7 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
   number.deleteSprite();
 
   number.createSprite(20, 18);
-  number.setTextColor(WHITE, GREY);
+  number.setTextColor(TFT_WHITE, TFT_DARKGREY);
   number.fillSprite(TFT_BLACK);
   number.setTextSize(2);
   number.setTextDatum(TR_DATUM);
@@ -239,7 +239,7 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
   number.deleteSprite();
 
   number.createSprite(20, 25);
-  number.setTextColor(WHITE, GREY);
+  number.setTextColor(TFT_WHITE, TFT_DARKGREY);
   number.fillSprite(TFT_BLACK);
   number.setTextSize(2);
   number.setTextDatum(TR_DATUM);
@@ -248,7 +248,7 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
   number.deleteSprite();
 
   number.createSprite(20, 25);
-  number.setTextColor(WHITE, GREY);
+  number.setTextColor(TFT_WHITE, TFT_DARKGREY);
   number.fillSprite(TFT_BLACK);
   number.setTextSize(2);
   number.setTextDatum(TR_DATUM);
@@ -257,7 +257,7 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
   number.deleteSprite();
 
   number.createSprite(20, 25);
-  number.setTextColor(WHITE, GREY);
+  number.setTextColor(TFT_WHITE, TFT_DARKGREY);
   number.fillSprite(TFT_BLACK);
   number.setTextSize(2);
   number.setTextDatum(TR_DATUM);
@@ -266,7 +266,7 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
   number.deleteSprite();
 
   number.createSprite(20, 25);
-  number.setTextColor(WHITE, GREY);
+  number.setTextColor(TFT_WHITE, TFT_DARKGREY);
   number.fillSprite(TFT_BLACK);
   number.setTextSize(2);
   number.setTextDatum(TR_DATUM);
@@ -275,7 +275,7 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
   number.deleteSprite();
 
   number.createSprite(20, 25);
-  number.setTextColor(WHITE, GREY);
+  number.setTextColor(TFT_WHITE, TFT_DARKGREY);
   number.fillSprite(TFT_BLACK);
   number.setTextSize(2);
   number.setTextDatum(TR_DATUM);
@@ -284,7 +284,7 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
   number.deleteSprite();
 
   number.createSprite(20, 25);
-  number.setTextColor(WHITE, GREY);
+  number.setTextColor(TFT_WHITE, TFT_DARKGREY);
   number.fillSprite(TFT_BLACK);
   number.setTextSize(2);
   number.setTextDatum(TR_DATUM);
@@ -293,7 +293,7 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
   number.deleteSprite();
 
   number.createSprite(20, 25);
-  number.setTextColor(WHITE, GREY);
+  number.setTextColor(TFT_WHITE, TFT_DARKGREY);
   number.fillSprite(TFT_BLACK);
   number.setTextSize(2);
   number.setTextDatum(TR_DATUM);
