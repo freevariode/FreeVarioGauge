@@ -97,11 +97,13 @@ void drawLogo() {
     drawBmp(bmpFS, 40, 55);
     bmpFS.close();
   } else {
-    Serial.println("Logo not found. Using deprecated LogoOV. Update of SPIFFS required.");
-    tft.setWindow(40, 55, 40 + 193, 55 + 155);
-    tft.pushColors(logoOV, 194 * 156);
-    return;
+    #ifdef DEBUG
+    Serial.println("Logo not found. Using deprecated LogoOV2. Update of SPIFFS required.");
+    #endif 
+    bool swap = tft.getSwapBytes();
+    tft.setSwapBytes(true);
+    tft.pushImage(40, 55, 194, 156, logoOV);
+    tft.setSwapBytes(swap);
   }
-
 
 }
