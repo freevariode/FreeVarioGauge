@@ -31,8 +31,15 @@ void SerialScan () {
           ChangeBaud = millis();
         }
       }
+
+      //****************************
+      //****  XCSoar is source  ****
+      //****************************
+
       if (DataString.startsWith("$PFV")) {
-        SourceIsXCSoar = true;
+        if (!SourceIsXCSoar) {
+          SourceIsXCSoar = true;
+        }
         //Serial2.println(DataString);
         int pos = DataString.indexOf(',');
         DataString.remove(0, pos + 1);
@@ -99,11 +106,41 @@ void SerialScan () {
 
         sf = (tas - stf) / 10;
       }
+
+      //***************************
+      //****  Larus is source  ****
+      //***************************
+
       if (DataString.startsWith("$PLAR")) {
-        SourceIsLarus = true;
+        if (!SourceIsLarus) {
+          SourceIsLarus = true;
+        }
+        if (dataString.startsWith("$PLARV")) {
+          if (serial2Error == true) {
+            serial2Error = false;
+            Serial.println("Error detected");
+          }
+
+          int pos0 = dataString.indexOf('*');
+          String dataToCheck = dataString.substring(0, pos0);
+          dataString.remove(0, pos0 + 1);
+          String CheckSum = dataString;
+          CheckSum.toLowerCase();
+          CheckSum.trim();
+          int checksum = calculateChecksum(dataToCheck);
+          String checksumString = String(checksum, HEX);
+          if (CheckSum == checksumString) {
+            lastTimeSerial2 = millis();
+            //Serial2.println(dataString);
+            dataToCheck.remove(0, 7);
+            int pos1 = dataToCheck.indexOf(',');                   //findet den Ort des ersten ,
+            String VAR = dataToCheck.substring(0, pos1);           //erfasst das aktuelle Steigen
+            var = VAR.toFloat();                                   //wandelt das aktuelle Steigen in float
+          }
+        }
       }
-      DataString = "";
-      vTaskDelay(20);
+        DataString = "";
+        vTaskDelay(20);
+      }
     }
   }
-}
