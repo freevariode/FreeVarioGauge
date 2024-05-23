@@ -35,7 +35,6 @@ void SerialScan () {
       //****************************
       //****  XCSoar is source  ****
       //****************************
-
       if (DataString.startsWith("$PFV")) {
         if (!SourceIsXCSoar) {
           SourceIsXCSoar = true;
@@ -137,6 +136,16 @@ void SerialScan () {
             int pos1 = dataToCheck.indexOf(',');                   //findet den Ort des ersten ,
             String VAR = dataToCheck.substring(0, pos1);           //erfasst das aktuelle Steigen
             var = VAR.toFloat();                                   //wandelt das aktuelle Steigen in float
+   
+            int pos2 = dataToCheck.indexOf(',', pos1 + 1);         //findet den Ort des zweiten ,
+            int pos3 = dataToCheck.indexOf(',', pos2 + 1);         //findet den Ort des dritten ,
+            int pos4 = dataToCheck.indexOf(',', pos3 + 1);         //findet den Ort des vierten ,
+            
+            String TAS = dataToCheck.substring(pos3 + 1, pos4);    //erfasst die TAS
+            valueTasAsFloat = TAS.toFloat();                       //wandelt die TAS in float
+            char buf2[20];
+            // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
+            valueTasAsString = dtostrf(valueTasAsFloat, 3, 0, buf2);
           }
         }
       }
