@@ -1,6 +1,6 @@
-/////////////////////
-// function to calculate pulse length
-/////////////////////
+//**********************************************
+//****  function to calculate pulse length  ****
+//**********************************************
 float calculatePulse(float liftIn) {
   float calculatedPulseLength = 0;
   if (digitalRead(STF_MODE) == LOW) {
@@ -29,9 +29,9 @@ float calculatePulse(float liftIn) {
   }
 }
 
-/////////////////////
-// function to calculate frequency
-/////////////////////
+//*******************************************
+//****  function to calculate frequency  ****
+//*******************************************
 float calculateNewFreq(float newValue, float oldValue) {
   if (digitalRead(STF_MODE) == LOW && (newValue >= 0) && (newValue < 8) && (newValue != oldValue)) {
     freqValue = (350 + (120 * newValue));
@@ -54,6 +54,19 @@ float calculateNewFreq(float newValue, float oldValue) {
   freqValueInc = (freqValue - freqValueOld) / 8;
   freqValueOld = freqValue;
   return freqValue;
+}
+
+//********************************
+//****  calculate Checksumme  ****
+//********************************
+int calculateChecksum(String mce) {
+  int i, XOR, c;
+  for (XOR = 0, i = 0; i < mce.length(); i++) {
+    c = (unsigned char)mce.charAt(i);
+    if (c == '*') break;
+    if ((c != '$') && (c != '!')) XOR ^= c;
+  }
+  return XOR;
 }
 
 //**************************

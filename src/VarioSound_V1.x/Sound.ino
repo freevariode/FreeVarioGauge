@@ -3,18 +3,18 @@ void Sound(void *) {
     sf = (tas - stf) / 10;
 
 
-    /////////////////////
-    // mute function using PTT
-    /////////////////////
+    //***********************************
+    //****  mute function using PTT  ****
+    //***********************************
     if (digitalRead(PTT) == LOW && valueMuteAsInt ) {
       gen.ApplySignal(SINE_WAVE, REG0, 0);
       delay(1);
     }
 
 
-    /////////////////////
-    // calculate Vario sound
-    /////////////////////
+    //*********************************
+    //****  calculate Vario sound  ****
+    //*********************************
     else if (digitalRead(STF_MODE) == LOW && var > 0.5 && startSound) {
       startTimePulse = millis();
       pulseTime = 0;
@@ -54,9 +54,9 @@ void Sound(void *) {
     }
 
 
-    /////////////////////
-    // calculate STF sound
-    /////////////////////
+    //*******************************
+    //****  calculate STF sound  ****
+    //*******************************
     else if (digitalRead(STF_MODE) == HIGH && ((sf > 1) || (sf < -1)) && startSound) {
       if ((count = 0) || (pulseTime > 1050)) {
         startTimePulse = millis();

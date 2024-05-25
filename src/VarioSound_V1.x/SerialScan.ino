@@ -1,7 +1,8 @@
-/////////////////////
-// read serial port
-/////////////////////
+//****************************
+//****  read serial port  ****
+//****************************
 void SerialScan () {
+  unsigned long lastTimeSerial2 = 0;
   if (updatemode == false) {
     WiFi.mode(WIFI_OFF);
     char Data;
@@ -48,37 +49,37 @@ void SerialScan () {
         String wert = DataString.substring(pos1 + 1, pos2);   //captures the second record
 
 
-        /////////////////////
-        // Analysis of the climb rate
-        /////////////////////
+        //**************************************
+        //****  Analysis of the climb rate  ****
+        //**************************************
         if (variable == "VAR") {
           var = wert.toFloat();
         }
 
-        /////////////////////
-        // Analysis of the current XCSoar mode
-        /////////////////////
+        //***********************************************
+        //****  Analysis of the current XCSoar mode  ****
+        //***********************************************
         if (variable == "MOD") {
           mod = wert;
         }
 
-        /////////////////////
-        // Analysis of the current Remote control mode
-        /////////////////////
+        //*******************************************************
+        //****  Analysis of the current Remote control mode  ****
+        //*******************************************************
         if (variable == "REM") {
           rem = wert;
         }
 
-        /////////////////////
-        // Analysis of the true airspeed
-        /////////////////////
+        //*****************************************
+        //****  Analysis of the true airspeed  ****
+        //*****************************************
         if (variable == "TAS") {
           tas = wert.toFloat();
         }
 
-        /////////////////////
-        // Analysis of speed to fly
-        /////////////////////
+        //************************************
+        //****  Analysis of speed to fly  ****
+        //************************************
         if (variable == "STF") {
           stfValue = wert.toFloat();
           if (digitalRead(STF_MODE) == 1 && tas > 10) {
@@ -90,16 +91,16 @@ void SerialScan () {
           }
         }
 
-        /////////////////////
-        // Analysis Mute
-        /////////////////////
+        //*************************
+        //****  Analysis Mute  ****
+        //*************************
         else if (variable == "MUT") {
           valueMuteAsInt = wert.toInt();
         }
 
-        /////////////////////
-        // Analysis Attenuation
-        /////////////////////
+        //********************************
+        //****  Analysis Attenuation  ****
+        //********************************
         else if (variable == "ATT") {
           valueAttenAsInt = wert.toInt();
         }
@@ -115,16 +116,11 @@ void SerialScan () {
         if (!SourceIsLarus) {
           SourceIsLarus = true;
         }
-        if (dataString.startsWith("$PLARV")) {
-          if (serial2Error == true) {
-            serial2Error = false;
-            Serial.println("Error detected");
-          }
-
-          int pos0 = dataString.indexOf('*');
-          String dataToCheck = dataString.substring(0, pos0);
-          dataString.remove(0, pos0 + 1);
-          String CheckSum = dataString;
+        if (DataString.startsWith("$PLARV")) {
+          int pos0 = DataString.indexOf('*');
+          String dataToCheck = DataString.substring(0, pos0);
+          DataString.remove(0, pos0 + 1);
+          String CheckSum = DataString;
           CheckSum.toLowerCase();
           CheckSum.trim();
           int checksum = calculateChecksum(dataToCheck);
@@ -136,11 +132,11 @@ void SerialScan () {
             int pos1 = dataToCheck.indexOf(',');                   //findet den Ort des ersten ,
             String VAR = dataToCheck.substring(0, pos1);           //erfasst das aktuelle Steigen
             var = VAR.toFloat();                                   //wandelt das aktuelle Steigen in float
-   
+
             int pos2 = dataToCheck.indexOf(',', pos1 + 1);         //findet den Ort des zweiten ,
             int pos3 = dataToCheck.indexOf(',', pos2 + 1);         //findet den Ort des dritten ,
             int pos4 = dataToCheck.indexOf(',', pos3 + 1);         //findet den Ort des vierten ,
-            
+
             String TAS = dataToCheck.substring(pos3 + 1, pos4);    //erfasst die TAS
             valueTasAsFloat = TAS.toFloat();                       //wandelt die TAS in float
             char buf2[20];

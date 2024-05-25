@@ -1,7 +1,7 @@
 void loop() {
-  /////////////////////
-  // Analysis automatic mode
-  /////////////////////
+//***********************************
+//****  Analysis automatic mode  ****
+//***********************************
   varioSchalter_state = digitalRead(Varioschalter);
   stfSchalter_state = digitalRead(STFSchalter);
   stfAuto_state = digitalRead(STFAuto);

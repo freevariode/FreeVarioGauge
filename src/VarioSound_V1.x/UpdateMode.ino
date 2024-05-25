@@ -1,8 +1,8 @@
 void UpdateMode() {
 
-  /////////////////////
-  // Check for update mode
-  /////////////////////
+  //*********************************
+  //****  Check for update mode  ****
+  //*********************************
   if (Loopcount == 0) {
     Loopcount = 1;
     changeMode = digitalRead(STF_MODE);

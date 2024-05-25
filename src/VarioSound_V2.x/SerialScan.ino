@@ -2,6 +2,7 @@
 //****  read serial port  ****
 //****************************
 void SerialScan () {
+  unsigned long lastTimeSerial2 = 0;
   if (updatemode == false) {
     WiFi.mode(WIFI_OFF);
     char Data;
@@ -115,16 +116,11 @@ void SerialScan () {
         if (!SourceIsLarus) {
           SourceIsLarus = true;
         }
-        if (dataString.startsWith("$PLARV")) {
-          if (serial2Error == true) {
-            serial2Error = false;
-            Serial.println("Error detected");
-          }
-
-          int pos0 = dataString.indexOf('*');
-          String dataToCheck = dataString.substring(0, pos0);
-          dataString.remove(0, pos0 + 1);
-          String CheckSum = dataString;
+        if (DataString.startsWith("$PLARV")) {
+          int pos0 = DataString.indexOf('*');
+          String dataToCheck = DataString.substring(0, pos0);
+          DataString.remove(0, pos0 + 1);
+          String CheckSum = DataString;
           CheckSum.toLowerCase();
           CheckSum.trim();
           int checksum = calculateChecksum(dataToCheck);

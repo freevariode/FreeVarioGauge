@@ -55,6 +55,19 @@ float calculateNewFreq(float newValue, float oldValue) {
   return freqValue;
 }
 
+//********************************
+//****  calculate Checksumme  ****
+//********************************
+int calculateChecksum(String mce) {
+  int i, XOR, c;
+  for (XOR = 0, i = 0; i < mce.length(); i++) {
+    c = (unsigned char)mce.charAt(i);
+    if (c == '*') break;
+    if ((c != '$') && (c != '!')) XOR ^= c;
+  }
+  return XOR;
+}
+
 //**************************
 //****  Filter for STF  ****
 //**************************
