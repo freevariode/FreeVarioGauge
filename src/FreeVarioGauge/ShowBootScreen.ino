@@ -10,12 +10,11 @@ void showBootScreen(String versionString) {
   TFT_eSprite bootSprite = TFT_eSprite(&tft);
   bootSprite.loadFont("micross20_boot");
   bootSprite.createSprite(195, 25);
-  bootSprite.fillSprite(WHITE);
+  bootSprite.fillSprite(TFT_WHITE);
   bootSprite.setCursor(0, 2);
-  bootSprite.setTextColor(GREY, BLACK);
-  tft.fillScreen(WHITE);
-  tft.setWindow(40, 55, 40 + 193, 55 + 155);
-  tft.pushColors(logoOV, 194 * 156);
+  bootSprite.setTextColor(TFT_DARKGREY, TFT_BLACK);
+  tft.fillScreen(TFT_WHITE);
+  drawLogo();
   bootSprite.println(versionString);
   bootSprite.pushSprite(40, 245);
   bootSprite.deleteSprite();
@@ -29,10 +28,10 @@ void showBootScreen(String versionString) {
       loopTime = millis() + 500;
       bootSprite.loadFont("micross20_boot");
       bootSprite.createSprite(195, 25);
-      bootSprite.fillSprite(WHITE);
+      bootSprite.fillSprite(TFT_WHITE);
       bootSprite.setCursor(0, 2);
-      bootSprite.setTextColor(GREY, BLACK);
-      tft.fillScreen(WHITE);
+      bootSprite.setTextColor(TFT_DARKGREY, TFT_BLACK);
+      tft.fillScreen(TFT_WHITE);
       tft.setWindow(40, 55, 40 + 193, 55 + 155);
       tft.pushColors(logoOV, 194 * 156);
       bootSprite.println("starting Update Mode");
@@ -44,7 +43,7 @@ void showBootScreen(String versionString) {
   if (updatemode == false) {
     WiFi.mode(WIFI_OFF);
     bootSprite.createSprite(195, 25);
-    bootSprite.fillSprite(WHITE);
+    bootSprite.fillSprite(TFT_WHITE);
     bootSprite.setCursor(0, 2);
     bootSprite.println(waitingMessage);
     bootSprite.pushSprite(40, 245);
@@ -61,20 +60,18 @@ void showBootScreen(String versionString) {
             dataString += serialString;
             serialString = Serial2.read();
           }
-          Serial.print("dataString: "); Serial.println(dataString);
-        }
-        else {
+          Serial.print("dataString: ");
+          Serial.println(dataString);
+        } else {
           if ((!SourceIsXCSoar && !SourceIsLarus) && (baudDetect == 0) && (millis() - ChangeBaud <= 5000)) {
             Serial2.end();
             Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
             baudDetect = 1;
-          }
-          else if ((!SourceIsXCSoar && !SourceIsLarus) && (baudDetect == 1) &&  (millis() - ChangeBaud > 5000) && (millis() - ChangeBaud <= 10000)) {
+          } else if ((!SourceIsXCSoar && !SourceIsLarus) && (baudDetect == 1) && (millis() - ChangeBaud > 5000) && (millis() - ChangeBaud <= 10000)) {
             Serial2.end();
             Serial2.begin(38400, SERIAL_8N1, RXD2, TXD2);
             baudDetect = 0;
-          }
-          else if ((!SourceIsXCSoar && !SourceIsLarus) && (millis() - ChangeBaud > 10000)) {
+          } else if ((!SourceIsXCSoar && !SourceIsLarus) && (millis() - ChangeBaud > 10000)) {
             ChangeBaud = millis();
           }
         }
@@ -83,10 +80,30 @@ void showBootScreen(String versionString) {
         }
         dataString = "";
       }
-    } while (serial2IsReady == 0); //0 = waiting for XCSoar, 1 = start without waiting
+    } while (serial2IsReady == 0);  //0 = waiting for XCSoar, 1 = start without waiting
     bootSprite.unloadFont();
     tft.fillScreen(TFT_BLACK);
     lastTimeReady = millis();
     showBootscreen = false;
   }
+}
+
+void drawLogo() {
+
+  fs::File bmpFS;
+
+  if (SPIFFS.exists("/FreeVario_194x156.bmp")) {
+    bmpFS = SPIFFS.open("/FreeVario_194x156.bmp", "r");
+    drawBmp(bmpFS, 40, 55);
+    bmpFS.close();
+  } else {
+    #ifdef DEBUG
+    Serial.println("Logo not found. Using deprecated LogoOV2. Update of SPIFFS required.");
+    #endif 
+    bool swap = tft.getSwapBytes();
+    tft.setSwapBytes(true);
+    tft.pushImage(40, 55, 194, 156, logoOV);
+    tft.setSwapBytes(swap);
+  }
+
 }

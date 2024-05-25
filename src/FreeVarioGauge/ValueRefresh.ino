@@ -41,12 +41,12 @@ void ValueRefresh(void *parameter) {
       }
 
       needleBlue.createSprite(20, 130);
-      needleBlue.drawWedgeLine(11, 0, 11, 130, 1, 10, BLUE);
+      needleBlue.drawWedgeLine(11, 0, 11, 130, 1, 10, TFT_BLUE);
       needleBlue.pushRotated(&background, valueAwdAsFloat, TFT_BLACK);
 
       if (valueCwdAsFloat != -1000) {
         needleGreen.createSprite(20, 130);
-        needleGreen.drawWedgeLine(11, 0, 11, 130, 1, 10, GREEN);
+        needleGreen.drawWedgeLine(11, 0, 11, 130, 1, 10, TFT_GREEN);
         needleGreen.pushRotated(&background, valueCwdAsFloat, TFT_BLACK);
       }
     }
@@ -65,9 +65,9 @@ void ValueRefresh(void *parameter) {
           }
           drawRectangle.createSprite(170, 41);
           drawRectangle.fillSprite(TFT_BLACK);
-          drawRectangle.drawRect(2, 2, 166, 37, RED);
-          drawRectangle.drawRect(1, 1, 168, 39, RED);
-          drawRectangle.drawRect(0, 0, 170, 41, RED);
+          drawRectangle.drawRect(2, 2, 166, 37, TFT_RED);
+          drawRectangle.drawRect(1, 1, 168, 39, TFT_RED);
+          drawRectangle.drawRect(0, 0, 170, 41, TFT_RED);
           drawRectangle.pushToSprite(&background, 55, 126 + offset, TFT_BLACK);
           delay(50);
           drawRectangle.pushToSprite(&background, 55, 126 + offset, TFT_BLACK);
@@ -83,9 +83,9 @@ void ValueRefresh(void *parameter) {
           }
           drawRectangle.createSprite(151, 41);
           drawRectangle.fillSprite(TFT_BLACK);
-          drawRectangle.drawRect(2, 2, 148, 37, RED);
-          drawRectangle.drawRect(1, 1, 150, 39, RED);
-          drawRectangle.drawRect(0, 0, 152, 41, RED);
+          drawRectangle.drawRect(2, 2, 148, 37, TFT_RED);
+          drawRectangle.drawRect(1, 1, 150, 39, TFT_RED);
+          drawRectangle.drawRect(0, 0, 152, 41, TFT_RED);
           drawRectangle.pushToSprite(&background, 73, 164 + offset, TFT_BLACK);
           drawRectangle.deleteSprite();
         }
@@ -99,9 +99,9 @@ void ValueRefresh(void *parameter) {
           }
           drawRectangle.createSprite(151, 41);
           drawRectangle.fillSprite(TFT_BLACK);
-          drawRectangle.drawRect(2, 2, 147, 37, RED);
-          drawRectangle.drawRect(1, 1, 149, 39, RED);
-          drawRectangle.drawRect(0, 0, 151, 41, RED);
+          drawRectangle.drawRect(2, 2, 147, 37, TFT_RED);
+          drawRectangle.drawRect(1, 1, 149, 39, TFT_RED);
+          drawRectangle.drawRect(0, 0, 151, 41, TFT_RED);
           drawRectangle.pushToSprite(&background, 74, 201 + offset, TFT_BLACK);
           drawRectangle.deleteSprite();
         }
@@ -109,9 +109,9 @@ void ValueRefresh(void *parameter) {
       else if (requestDrawMenuLevel == 3) {
         drawRectangle.createSprite(150, 3);
         drawRectangle.fillSprite(TFT_BLACK);
-        drawRectangle.drawLine(0, 2, 150, 2, RED);;
-        drawRectangle.drawLine(0, 1, 150, 1, RED);
-        drawRectangle.drawLine(0, 0, 150, 0, RED);
+        drawRectangle.drawLine(0, 2, 150, 2, TFT_RED);;
+        drawRectangle.drawLine(0, 1, 150, 1, TFT_RED);
+        drawRectangle.drawLine(0, 0, 150, 0, TFT_RED);
         drawRectangle.pushToSprite(&background, 74, 241 + offset, TFT_BLACK);
         drawRectangle.deleteSprite();
       }
@@ -129,7 +129,7 @@ void ValueRefresh(void *parameter) {
     }
     if (stf_mode_state == 0) {
       if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE ) {
-        DrawText(nameOfField, WHITE, "large", "Avg.", valueVaaAsString, 34, 40, 99, 88, 84 + offset); //+1
+        DrawText(nameOfField, TFT_WHITE, "large", "Avg.", valueVaaAsString, 34, 40, 99, 88, 84 + offset); //+1
         xSemaphoreGive(xTFTSemaphore);
       }
     }
@@ -137,7 +137,7 @@ void ValueRefresh(void *parameter) {
     if (stf_mode_state == 1) {
       if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
       {
-        DrawText(nameOfField, WHITE, "large", "Net.", valueVanAsString, 34, 40, 99, 88, 84 + offset);
+        DrawText(nameOfField, TFT_WHITE, "large", "Net.", valueVanAsString, 34, 40, 99, 88, 84 + offset);
         xSemaphoreGive(xTFTSemaphore);
       }
     }
@@ -151,13 +151,13 @@ void ValueRefresh(void *parameter) {
       }
       if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
       {
-        DrawText(nameOfField, WHITE, "small", "Wind", "", 36, 25, 0, 105, 45);
+        DrawText(nameOfField, TFT_WHITE, "small", "Wind", "", 36, 25, 0, 105, 45);
         xSemaphoreGive(xTFTSemaphore);
       }
       if (valueCwdAsFloat != -1000) {
         if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
         {
-          DrawText(nameOfField, GREEN, "small", "", valueCwsAsString, 0, 25, 40, 140, 40);
+          DrawText(nameOfField, TFT_GREEN, "small", "", valueCwsAsString, 0, 25, 40, 140, 40);
           //avsWasUpdated = true;
           //casWasUpdated = false;
           xSemaphoreGive(xTFTSemaphore);
@@ -165,7 +165,7 @@ void ValueRefresh(void *parameter) {
       }
       if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
       {
-        DrawText(nameOfField, BLUE, "small", "", valueAwsAsString, 0, 25, 40, 176, 40);
+        DrawText(nameOfField, TFT_BLUE, "small", "", valueAwsAsString, 0, 25, 40, 176, 40);
         xSemaphoreGive(xTFTSemaphore);
       }
     }
@@ -180,10 +180,10 @@ void ValueRefresh(void *parameter) {
     if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
     {
       if ((requestDrawMenuLevel == 1 ) && (requestDrawMenu == 1) || (requestDrawMenuLevel == 2 ) && (requestDrawMenu == 1)) {
-        DrawText(nameOfField, RED, "small", nameSpeed, valueSpeed + " km/h", 28, 25, 130, 63, 136 + offset); //+18
+        DrawText(nameOfField, TFT_RED, "small", nameSpeed, valueSpeed + " km/h", 28, 25, 130, 63, 136 + offset); //+18
       }
       else {
-        DrawText(nameOfField, WHITE, "small", nameSpeed, valueSpeed + " km/h", 28, 25, 130, 63, 136 + offset);
+        DrawText(nameOfField, TFT_WHITE, "small", nameSpeed, valueSpeed + " km/h", 28, 25, 130, 63, 136 + offset);
       }
       xSemaphoreGive(xTFTSemaphore);
     }
@@ -198,10 +198,10 @@ void ValueRefresh(void *parameter) {
     if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
     {
       if ((requestDrawMenuLevel == 1 ) && (requestDrawMenu == 2) || (requestDrawMenuLevel == 2 ) && (requestDrawMenu == 2)) {
-        DrawText(nameOfField, RED, "small", nameHight, valueHight + " m", 31, 25, 108, 82, 173 + offset); //+12
+        DrawText(nameOfField, TFT_RED, "small", nameHight, valueHight + " m", 31, 25, 108, 82, 173 + offset); //+12
       }
       else {
-        DrawText(nameOfField, WHITE, "small", nameHight, valueHight + " m", 31, 25, 108, 82, 173 + offset);
+        DrawText(nameOfField, TFT_WHITE, "small", nameHight, valueHight + " m", 31, 25, 108, 82, 173 + offset);
       }
       xSemaphoreGive(xTFTSemaphore);
     }
@@ -218,10 +218,10 @@ void ValueRefresh(void *parameter) {
       {
         valueSetting = valueMacAsString;
         if ((requestDrawMenuLevel == 1 ) && (requestDrawMenu == 3)) {
-          DrawText(nameOfField, RED, "small", "MC", valueSetting + " m/s", 24, 25, 114, 83, 210 + offset); //+6
+          DrawText(nameOfField, TFT_RED, "small", "MC", valueSetting + " m/s", 24, 25, 114, 83, 210 + offset); //+6
         }
         else {
-          DrawText(nameOfField, WHITE, "small", "MC", valueSetting + " m/s", 24, 25, 114, 83, 210 + offset);
+          DrawText(nameOfField, TFT_WHITE, "small", "MC", valueSetting + " m/s", 24, 25, 114, 83, 210 + offset);
         }
         xSemaphoreGive(xTFTSemaphore);
       }
@@ -232,10 +232,10 @@ void ValueRefresh(void *parameter) {
       {
         valueSetting = valueQnhAsString;
         if ((requestDrawMenuLevel == 2 ) && (requestDrawMenu == 3) || (requestDrawMenuLevel == 3 ) && (requestDrawMenu == 3)) {
-          DrawText(nameOfField, RED, "small", "QNH", valueSetting, 50, 25, 88, 83, 210 + offset);
+          DrawText(nameOfField, TFT_RED, "small", "QNH", valueSetting, 50, 25, 88, 83, 210 + offset);
         }
         else {
-          DrawText(nameOfField, WHITE, "small", "QNH", valueSetting, 50, 25, 88, 83, 210 + offset);
+          DrawText(nameOfField, TFT_WHITE, "small", "QNH", valueSetting, 50, 25, 88, 83, 210 + offset);
         }
         xSemaphoreGive(xTFTSemaphore);
       }
@@ -246,10 +246,10 @@ void ValueRefresh(void *parameter) {
       {
         valueSetting = valueBugAsString;
         if ((requestDrawMenuLevel == 2 ) && (requestDrawMenu == 3) || (requestDrawMenuLevel == 3 ) && (requestDrawMenu == 3)) {
-          DrawText(nameOfField, RED, "small", "Bug", valueSetting + " %", 39, 25, 99, 83, 210 + offset);
+          DrawText(nameOfField, TFT_RED, "small", "Bug", valueSetting + " %", 39, 25, 99, 83, 210 + offset);
         }
         else {
-          DrawText(nameOfField, WHITE, "small", "Bug", valueSetting + " %", 39, 25, 99, 83, 210 + offset);
+          DrawText(nameOfField, TFT_WHITE, "small", "Bug", valueSetting + " %", 39, 25, 99, 83, 210 + offset);
         }
         xSemaphoreGive(xTFTSemaphore);
       }
@@ -260,10 +260,10 @@ void ValueRefresh(void *parameter) {
       {
         valueSetting = valueAttenAsString;
         if ((requestDrawMenuLevel == 2 ) && (requestDrawMenu == 3) || (requestDrawMenuLevel == 3 ) && (requestDrawMenu == 3)) {
-          DrawText(nameOfField, RED, "small", "ATT", valueSetting, 39, 25, 99, 83, 210 + offset);
+          DrawText(nameOfField, TFT_RED, "small", "ATT", valueSetting, 39, 25, 99, 83, 210 + offset);
         }
         else {
-          DrawText(nameOfField, WHITE, "small", "ATT", valueSetting, 39, 25, 99, 83, 210 + offset);
+          DrawText(nameOfField, TFT_WHITE, "small", "ATT", valueSetting, 39, 25, 99, 83, 210 + offset);
         }
         xSemaphoreGive(xTFTSemaphore);
       }
@@ -274,10 +274,10 @@ void ValueRefresh(void *parameter) {
       {
         valueSetting = valueMuteAsString;
         if ((requestDrawMenuLevel == 2 ) && (requestDrawMenu == 3) || (requestDrawMenuLevel == 3 ) && (requestDrawMenu == 3)) {
-          DrawText(nameOfField, RED, "small", "Mute", valueSetting, 39, 25, 99, 83, 210 + offset);
+          DrawText(nameOfField, TFT_RED, "small", "Mute", valueSetting, 39, 25, 99, 83, 210 + offset);
         }
         else {
-          DrawText(nameOfField, WHITE, "small", "Mute", valueSetting, 39, 25, 99, 83, 210 + offset);
+          DrawText(nameOfField, TFT_WHITE, "small", "Mute", valueSetting, 39, 25, 99, 83, 210 + offset);
         }
         xSemaphoreGive(xTFTSemaphore);
       }
@@ -288,10 +288,10 @@ void ValueRefresh(void *parameter) {
       {
         valueSetting = valueWindAsString;
         if ((requestDrawMenuLevel == 2 ) && (requestDrawMenu == 3) || (requestDrawMenuLevel == 3 ) && (requestDrawMenu == 3)) {
-          DrawText(nameOfField, RED, "small", "Wind", valueSetting, 39, 25, 99, 83, 210 + offset);
+          DrawText(nameOfField, TFT_RED, "small", "Wind", valueSetting, 39, 25, 99, 83, 210 + offset);
         }
         else {
-          DrawText(nameOfField, WHITE, "small", "Wind", valueSetting, 39, 25, 99, 83, 210 + offset);
+          DrawText(nameOfField, TFT_WHITE, "small", "Wind", valueSetting, 39, 25, 99, 83, 210 + offset);
         }
         xSemaphoreGive(xTFTSemaphore);
       }
@@ -299,7 +299,7 @@ void ValueRefresh(void *parameter) {
 
     if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
     {
-      DrawText(nameOfField, WHITE, "small", "Mode", stf_mode, 38, 25, 75, 105, 248);
+      DrawText(nameOfField, TFT_WHITE, "small", "Mode", stf_mode, 38, 25, 75, 105, 248);
       xSemaphoreGive(xTFTSemaphore);
     }
     vTaskDelay(15);

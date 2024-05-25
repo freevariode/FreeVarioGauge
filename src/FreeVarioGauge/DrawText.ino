@@ -8,7 +8,6 @@ void DrawText(TFT_eSprite fontOfName, uint32_t color, String infoType, String sp
   }
   Name.createSprite(spriteNameWidth, 25);
   Name.setTextColor(color, color);
-  Name.fillSprite(BLACK);
   Name.fillSprite(TFT_BLACK);
   Name.setTextDatum(TR_DATUM);
   Name.drawString(spriteName, spriteNameWidth, 2);
@@ -20,8 +19,7 @@ void DrawText(TFT_eSprite fontOfName, uint32_t color, String infoType, String sp
       smallFont.loadFont("micross30");
     }
     smallFont.createSprite(spriteValueWidth, spriteValueHight);
-    smallFont.setTextColor(color, BLACK);
-    smallFont.fillSprite(BLACK);
+    smallFont.setTextColor(color, TFT_BLACK);
     smallFont.fillSprite(TFT_BLACK);
     smallFont.setTextDatum(TR_DATUM);
     smallFont.drawString(value, spriteValueWidth, 2);
@@ -32,8 +30,7 @@ void DrawText(TFT_eSprite fontOfName, uint32_t color, String infoType, String sp
   else if (infoType == "large") {
     fontOfName.loadFont("micross50");
     fontOfName.createSprite(spriteValueWidth, spriteValueHight);
-    fontOfName.setTextColor(color, BLACK);
-    fontOfName.fillSprite(BLACK);
+    fontOfName.setTextColor(color, TFT_BLACK);
     fontOfName.fillSprite(TFT_BLACK);
     fontOfName.setTextDatum(TR_DATUM);
     fontOfName.drawString(value, spriteValueWidth, 2);

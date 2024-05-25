@@ -14,10 +14,6 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-/** ToDo
-    Ton durch ESP erzeugen lassen
-*/
-
 //*************************************************
 //****  Screen and SPIFFS Headers and Defines  ****
 //*************************************************
@@ -38,15 +34,6 @@ Preferences prefs;
 
 ESP32Encoder Vario_Enc;
 
-#define BLACK   0x0000
-#define RED     0x001F
-#define BLUE    0xfd40
-#define GREEN   0x07E0
-#define CYAN    0xFFE0
-#define MAGENTA 0xF81F
-#define YELLOW  0x07FF
-#define WHITE   0xFFFF
-#define GREY    0x632c
 #define RXD2 16
 #define TXD2 17
 #define VE_PB 27
