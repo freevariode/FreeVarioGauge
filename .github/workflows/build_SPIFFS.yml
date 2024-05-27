@@ -1,0 +1,17 @@
+name: Build FreeVarioGauge
+
+on:
+  push:
+    branches:
+      - '*'
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build SPIFFS
+        run: |
+         curl -fsSL https://github.com/espressif/esp-idf/blob/v5.2.1/components/spiffs/spiffsgen.py -o tools/spiffsgen/spiffsgen.py
+         python3 tools/spiffsgen/spiffsgen.py 1441792 data data.spiffs 
