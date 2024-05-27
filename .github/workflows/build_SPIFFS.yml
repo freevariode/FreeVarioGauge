@@ -15,4 +15,4 @@ jobs:
         run: |
          mkdir -p tools/spiffsgen
          curl -fsSL https://raw.githubusercontent.com/espressif/esp-idf/v5.2.1/components/spiffs/spiffsgen.py -o tools/spiffsgen/spiffsgen.py
-         python3 tools/spiffsgen/spiffsgen.py 1441792 data data.spiffs 
+         python3 tools/spiffsgen/spiffsgen.py 1441792 $GITHUB_WORKSPACE/src/FreeVarioGauge/data FreeVarioGauge_data.spiffs 
