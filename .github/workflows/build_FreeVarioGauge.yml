@@ -29,7 +29,7 @@ jobs:
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v4
         with:
-           name: Archive Firmware image
+           name: Archive FreeVarioGauge Firmware image
            path: build/FreeVarioGauge.ino.bin
            retention-days: 1
 
@@ -47,7 +47,7 @@ jobs:
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v4
         with:
-           name: Archive SPIFFS image
+           name: Archive FreeVarioGauge SPIFFS image
            path: build/FreeVarioGauge_data.spiffs
            retention-days: 1
 
@@ -75,7 +75,7 @@ jobs:
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v4
         with:
-           name: Archive Firmware image
+           name: Archive VarioSound_V2.x Firmware image
            path: build/VarioSound_V2.x.ino.bin
            retention-days: 1
 
@@ -94,7 +94,7 @@ jobs:
               - name: 'Upload Artifact'
                 uses: actions/upload-artifact@v4
                 with:
-                   name: Archive SPIFFS image
+                   name: Archive VarioSound_V2.x SPIFFS image
                    path: build/VarioSound_v2x_data.spiffs
                    retention-days: 1
         
