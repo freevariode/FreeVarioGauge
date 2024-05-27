@@ -3,17 +3,14 @@ name: Build FreeVarioGauge
 on:
   push:
     branches:
-      - master
-  pull_request:
-    branches:
-      - master
-
+      - '*'
+  
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Arduino-CLI
         run: |
           python3 -m pip install pyserial
@@ -27,8 +24,29 @@ jobs:
           bin/arduino-cli lib install Streaming TFT_eSPI ESP32Encoder
       - name: Build
         run: |
-          bin/arduino-cli compile --fqbn esp32:esp32:esp32doit-devkit-v1 $GITHUB_WORKSPACE/src/FreeVarioGauge/FreeVarioGauge.ino
+          mkdir -p build
+          bin/arduino-cli compile --build-path  --fqbn esp32:esp32:esp32doit-devkit-v1 $GITHUB_WORKSPACE/src/FreeVarioGauge/FreeVarioGauge.ino
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v4
+        with:
+           name: Archive Firmware image
+           path: build/FreeVarioGauge.ino.bin
+           retention-days: 1
+
+  build_spiffs:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
       - name: Build SPIFFS
         run: |
-         curl -fsSL https://github.com/espressif/esp-idf/blob/v5.2.1/components/spiffs/spiffsgen.py 
-         && python3 tools/spiffsgen/spiffsgen.py 1441792 data data.spiffs 
+         mkdir -p tools/spiffsgen
+         mkdir -p build
+         curl -fsSL https://raw.githubusercontent.com/espressif/esp-idf/v5.2.1/components/spiffs/spiffsgen.py -o tools/spiffsgen/spiffsgen.py
+         python3 tools/spiffsgen/spiffsgen.py 1441792 $GITHUB_WORKSPACE/src/FreeVarioGauge/data build/FreeVarioGauge_data.spiffs 
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v4
+        with:
+           name: Archive SPIFFS image
+           path: build/FreeVarioGauge_data.spiffs
+           retention-days: 1
