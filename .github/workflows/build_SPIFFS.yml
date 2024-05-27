@@ -14,6 +14,7 @@ jobs:
       - name: Build SPIFFS
         run: |
          mkdir -p tools/spiffsgen
+         mkdir -p build
          curl -fsSL https://raw.githubusercontent.com/espressif/esp-idf/v5.2.1/components/spiffs/spiffsgen.py -o tools/spiffsgen/spiffsgen.py
          python3 tools/spiffsgen/spiffsgen.py 1441792 $GITHUB_WORKSPACE/src/FreeVarioGauge/data build/FreeVarioGauge_data.spiffs 
          md5sum build/FreeVarioGauge_data.spiffs > build/FreeVarioGauge_data.spiffs.md5
