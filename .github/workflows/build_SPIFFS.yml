@@ -1,4 +1,4 @@
-name: Build FreeVarioGauge
+name: Build SPIFFS
 
 on:
   push:
@@ -13,5 +13,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build SPIFFS
         run: |
+         mkdir -p tools/spiffsgen
          curl -fsSL https://github.com/espressif/esp-idf/blob/v5.2.1/components/spiffs/spiffsgen.py -o tools/spiffsgen/spiffsgen.py
          python3 tools/spiffsgen/spiffsgen.py 1441792 data data.spiffs 
