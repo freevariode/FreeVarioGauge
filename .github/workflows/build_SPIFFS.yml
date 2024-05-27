@@ -14,10 +14,10 @@ jobs:
       - name: Build SPIFFS
         run: |
          mkdir -p tools/spiffsgen
-         mkdir -p build
+         mkdir -p $GITHUB_WORKSPACE/build
          curl -fsSL https://raw.githubusercontent.com/espressif/esp-idf/v5.2.1/components/spiffs/spiffsgen.py -o tools/spiffsgen/spiffsgen.py
-         python3 tools/spiffsgen/spiffsgen.py 1441792 $GITHUB_WORKSPACE/src/FreeVarioGauge/data build/FreeVarioGauge_data.spiffs 
-         md5sum build/FreeVarioGauge_data.spiffs > build/FreeVarioGauge_data.spiffs.md5
+         python3 tools/spiffsgen/spiffsgen.py 1441792 $GITHUB_WORKSPACE/src/FreeVarioGauge/data $GITHUB_WORKSPACE/build/FreeVarioGauge_data.spiffs 
+         md5sum $GITHUB_WORKSPACE/build/FreeVarioGauge_data.spiffs > $GITHUB_WORKSPACE/build/FreeVarioGauge_data.spiffs.md5
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v4
         with:
