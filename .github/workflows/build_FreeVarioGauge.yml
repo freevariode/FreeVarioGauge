@@ -18,7 +18,7 @@ jobs:
           bin/arduino-cli config init
           bin/arduino-cli core update-index
       - name: Install ESP32
-        run: bin/arduino-cli core install esp32:esp32
+        run: bin/arduino-cli core install esp32:esp32@2.0.17
       - name: Install Libraries
         run: |
           bin/arduino-cli lib install Streaming TFT_eSPI ESP32Encoder
