@@ -67,11 +67,11 @@ jobs:
       - name: Install ESP32
         run: |
           bin/arduino-cli core install esp32:esp32
-          curl -fsSL https://github.com/RobTillaart/AD9833/archive/refs/tags/0.4.1.zip -o AD9833.zip
-          unzip AD9833.zip -d /home/runner/Arduino/libraries/
       - name: Install Libraries
         run: |
           bin/arduino-cli lib install Streaming ESP32Encoder
+          curl -fsSL https://github.com/RobTillaart/AD9833/archive/refs/tags/0.4.1.zip -o AD9833.zip
+          unzip AD9833.zip -d /home/runner/Arduino/libraries/
       - name: Build
         run: |
           mkdir -p build
