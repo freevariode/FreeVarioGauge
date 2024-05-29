@@ -53,6 +53,53 @@ jobs:
            retention-days: 1
 
 
+  build_variosound_v1:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Arduino-CLI
+        run: |
+          python3 -m pip install pyserial
+          curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+          bin/arduino-cli config init
+          bin/arduino-cli core update-index
+      - name: Install ESP32
+        run: bin/arduino-cli core install esp32:esp32
+      - name: Install Libraries
+        run: |
+          bin/arduino-cli lib install Streaming ESP32Encoder
+      - name: Build
+        run: |
+          mkdir -p build
+          bin/arduino-cli compile --build-path build --fqbn esp32:esp32:esp32doit-devkit-v1 $GITHUB_WORKSPACE/src/VarioSound_V1.x/VarioSound_V1.x.ino
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v4
+        with:
+           name: Archive VarioSound_V1.x Firmware image
+           path: build/VarioSound_V1.x.ino.bin
+           retention-days: 1
+
+
+  build_variosound_v1_x_spiffs:
+            runs-on: ubuntu-latest
+            needs: build_variosound_v1
+            steps:
+              - uses: actions/checkout@v4
+              - name: Build SPIFFS
+                run: |
+                 mkdir -p tools/spiffsgen
+                 mkdir -p build
+                 curl -fsSL https://raw.githubusercontent.com/espressif/esp-idf/v5.2.1/components/spiffs/spiffsgen.py -o tools/spiffsgen/spiffsgen.py
+                 python3 tools/spiffsgen/spiffsgen.py 1441792 $GITHUB_WORKSPACE/src/VarioSound_V1.x/data build/VarioSound_v1x_data.spiffs 
+              - name: 'Upload Artifact'
+                uses: actions/upload-artifact@v4
+                with:
+                   name: Archive VarioSound_V1.x SPIFFS image
+                   path: build/VarioSound_v1x_data.spiffs
+                   retention-days: 1
+
+
   build_variosound_v2:
     runs-on: ubuntu-latest
 
