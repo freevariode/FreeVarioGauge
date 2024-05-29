@@ -65,10 +65,12 @@ jobs:
           bin/arduino-cli config init
           bin/arduino-cli core update-index
       - name: Install ESP32
-        run: bin/arduino-cli core install esp32:esp32
+        run: |
+          bin/arduino-cli core install esp32:esp32
       - name: Install Libraries
         run: |
           bin/arduino-cli lib install Streaming ESP32Encoder
+          git clone https://github.com/Billwilliams1952/AD9833-Library-Arduino.git /home/runner/Arduino/libraries/AD9833
       - name: Build
         run: |
           mkdir -p build
