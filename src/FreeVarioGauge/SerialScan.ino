@@ -158,7 +158,12 @@ void SerialScan (void *p) {
       //********************************
       else if (variable == "STF") {
         stfValue = wert.toFloat();
-        if (stf_mode_state == 1 && valueTasAsFloat > 10) {
+        
+        String stfNMEA = ("$PFV,STF," + String((float)stfValue) + "*");
+        int checksum = calculateChecksum(stfNMEA);
+        Serial2.printf("%s%X\n", stfNMEA.c_str(), checksum);
+        
+        if (valueTasAsFloat > 10) {
           int FF = (valueAttenAsInt * 10) + 1;
           stf = filter(stfValue, FF);
         }

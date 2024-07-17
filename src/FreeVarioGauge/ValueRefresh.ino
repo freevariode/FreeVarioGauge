@@ -41,7 +41,7 @@ void ValueRefresh(void *parameter) {
       }
 
       needleBlue.createSprite(20, 130);
-      needleBlue.drawWedgeLine(11, 0, 11, 130, 1, 10, TFT_BLUE);
+      needleBlue.drawWedgeLine(11, 0, 11, 130, 1, 10, BLUE);
       needleBlue.pushRotated(&background, valueAwdAsFloat, TFT_BLACK);
 
       if (valueCwdAsFloat != -1000) {
@@ -165,7 +165,7 @@ void ValueRefresh(void *parameter) {
       }
       if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
       {
-        DrawText(nameOfField, TFT_BLUE, "small", "", valueAwsAsString, 0, 25, 40, 176, 40);
+        DrawText(nameOfField, BLUE, "small", "", valueAwsAsString, 0, 25, 40, 176, 40);
         xSemaphoreGive(xTFTSemaphore);
       }
     }

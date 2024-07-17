@@ -44,6 +44,7 @@ ESP32Encoder Vario_Enc;
 #define InnerRadius 130
 #define xCenter 160
 #define yCenter 160
+#define BLUE 0x04df 
 
 static TFT_eSPI tft = TFT_eSPI();
 TFT_eSprite nameOfField = TFT_eSprite(&tft);

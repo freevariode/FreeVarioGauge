@@ -82,7 +82,7 @@ void SerialScan () {
         //************************************
         if (variable == "STF") {
           stfValue = wert.toFloat();
-          if (digitalRead(STF_MODE) == 1 && tas > 10) {
+          if (tas > 10) {
             int FF = (valueAttenAsInt * 10) + 1;
             stf = filter(stfValue, FF);
           }
