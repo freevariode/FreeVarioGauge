@@ -297,6 +297,20 @@ void ValueRefresh(void *parameter) {
       }
     }
 
+    else if (nameSetting == "STF") {
+      if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+      {
+        valueSetting = valueSTFAsString;
+        if ((requestDrawMenuLevel == 2 ) && (requestDrawMenu == 3) || (requestDrawMenuLevel == 3 ) && (requestDrawMenu == 3)) {
+          DrawText(nameOfField, TFT_RED, "small", "STF", valueSetting, 39, 25, 99, 83, 210 + offset);
+        }
+        else {
+          DrawText(nameOfField, TFT_WHITE, "small", "STF", valueSetting, 39, 25, 99, 83, 210 + offset);
+        }
+        xSemaphoreGive(xTFTSemaphore);
+      }
+    }
+
     if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
     {
       DrawText(nameOfField, TFT_WHITE, "small", "Mode", stf_mode, 38, 25, 75, 105, 248);

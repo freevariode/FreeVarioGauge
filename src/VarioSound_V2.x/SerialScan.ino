@@ -104,6 +104,13 @@ void SerialScan () {
         else if (variable == "ATT") {
           valueAttenAsInt = wert.toInt();
         }
+        
+        //*******************************
+        //****  analyse STF-Mode  ****
+        //*******************************
+        else if (variable == "SMO") {
+          valueSTFAsInt = wert.toInt();
+        }
 
         sf = (tas - stf) / 10;
       }

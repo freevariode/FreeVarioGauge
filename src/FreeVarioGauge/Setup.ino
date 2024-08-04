@@ -40,6 +40,7 @@ void setup() {
   valueMuteAsInt = prefs.getUInt("Mute", 1);
   valueAttenAsInt = prefs.getUInt("ATTEN", 2);
   valueWindAsInt = prefs.getUInt("Wind", 1);
+  valueSTFAsInt = prefs.getUInt("STF", 1);
   nameSpeed = prefs.getString("nameSpeed", "GS");
   nameHight = prefs.getString("nameHight", "MSL");
   prefs.end();
@@ -58,6 +59,13 @@ void setup() {
   }
   else if (valueWindAsInt == 1) {
     valueWindAsString = "ON";
+  }
+  
+  if (valueSTFAsInt == 1) {
+    valueSTFAsString = "OV";
+  }
+  else if (valueSTFAsInt == 0) {
+    valueSTFAsString = "Flaps";
   }
   showBootScreen(SOFTWARE_VERSION);
 }

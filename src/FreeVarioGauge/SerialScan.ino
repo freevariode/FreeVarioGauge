@@ -278,7 +278,7 @@ void SerialScan (void *p) {
         valueAttenAsInt = wert.toInt();
       }
     }
-
+    
     //***************************
     //****  Larus is source  ****
     //***************************

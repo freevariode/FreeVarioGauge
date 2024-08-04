@@ -67,7 +67,7 @@ SemaphoreHandle_t xTFTSemaphore;
 long NOT_SET = -1;
 long pushButtonPressTime = NOT_SET;
 
-const String SOFTWARE_VERSION = "  V2.1.1 - 2024";
+const String SOFTWARE_VERSION = "  V2.2 - 2024";
 
 const char *host = "FreeVario_Displayboard";
 const char *ssid = "FV_Displayboard";
@@ -86,6 +86,7 @@ String valueQnhAsString = "1013";
 String valueBugAsString = "0";
 String valueMuteAsString = "NA";
 String valueWindAsString = "NA";
+String valueSTFAsString = "NA";
 String valueAttenAsString = "2";
 String valueGrsAsString = "0";
 String valueTasAsString = "0";
@@ -146,6 +147,7 @@ int Wificount = 0;
 int valueMuteAsInt;
 int valueAttenAsInt;
 int valueWindAsInt;
+int valueSTFAsInt;
 int changeMode;
 int oldChangeMode;
 int offset = 0;
