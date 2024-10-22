@@ -11,7 +11,9 @@ void SerialScan () {
       Data = Serial2.read();
       if (Data == '$') {
         while (Data != 10) {
-          DataString += Data;
+          if (Data >= 32 && Data <= 126) {
+            DataString += Data;
+          }
           Data = Serial2.read();
         }
         startSound = true;
@@ -104,7 +106,7 @@ void SerialScan () {
         else if (variable == "ATT") {
           valueAttenAsInt = wert.toInt();
         }
-        
+
         //*******************************
         //****  analyse STF-Mode  ****
         //*******************************

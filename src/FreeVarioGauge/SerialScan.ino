@@ -25,7 +25,9 @@ void SerialScan (void *p) {
       if (serialString == '$') {
         long timeSystemReady = millis() - lastTimeReady;
         while (serialString != 10) {
-          dataString += serialString;
+          if (serialString >= 32 && serialString <= 126) {
+            dataString += serialString;
+          }
           serialString = Serial2.read();
           if (dataString.length() > 300) {
             dataString = "ERROR";
@@ -278,7 +280,7 @@ void SerialScan (void *p) {
         valueAttenAsInt = wert.toInt();
       }
     }
-    
+
     //***************************
     //****  Larus is source  ****
     //***************************
