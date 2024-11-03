@@ -15,26 +15,30 @@ void Sound(void *) {
     //*********************************
     //****  calculate Vario sound  ****
     //*********************************
-    else if (digitalRead(STF_MODE) == LOW && var > 0.5 && startSound) {
-      startTimePulse = millis();
-      pulseTime = 0;
-      while (pulseTime < calculatePulse(var)) {
-        stopSinus();
-        pulseTime = millis() - startTimePulse;
-        delay(1);
+     else if (digitalRead(STF_MODE) == LOW && startSound && varAvailable && var >= 0.5) {
+        startTimePulse = millis();
+        pulseTime = 0;
+        while (pulseTime < calculatePulse(var)) {
+          stopSinus();
+          pulseTime = millis() - startTimePulse;
+          delay(1);
+        }
+        do  {
+          calculateNewFreq(var, varOld);
+          freqValue = sinusSetFrequency(freqValue);
+          pulseTime = millis() - startTimePulse;
+          delay(1);
+        } while (pulseTime < (calculatePulse(var) + (calculatePulse(var) / 2)));
       }
-      do  {
+      else if (digitalRead(STF_MODE) == LOW && startSound && varAvailable && var < 0.5) {
         calculateNewFreq(var, varOld);
         freqValue = sinusSetFrequency(freqValue);
-        pulseTime = millis() - startTimePulse;
         delay(1);
-      } while (pulseTime < (calculatePulse(var) + (calculatePulse(var) / 2)));
-    }
-    else if (digitalRead(STF_MODE) == LOW && var <= 0.5 && startSound) {
-      calculateNewFreq(var, varOld);
-      freqValue = sinusSetFrequency(freqValue);
-      delay(1);
-    }
+      }
+      else if (!varAvailable){
+        stopSinus();
+        delay(1);
+      }
 
 
     //*******************************
@@ -60,7 +64,7 @@ void Sound(void *) {
       count = 0;
     }
 
-    else if (digitalRead(STF_MODE) == HIGH && sf > -1 && sf < 1 && startSound) {
+    else if (digitalRead(STF_MODE) == HIGH && sf >= -1 && sf <= 1 && startSound) {
       stopSinus();
       delay(1);
     }

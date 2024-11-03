@@ -79,6 +79,7 @@ bool SourceIsXCSoar = false;
 bool SourceIsLarus = false;
 bool initDone = false;
 bool startSound = false;
+bool varAvailable = false; 
 
 float sf = 0;
 float stfValue = 0;                        // Speed to Fly value

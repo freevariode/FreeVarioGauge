@@ -56,6 +56,7 @@ void SerialScan () {
         //**************************************
         if (variable == "VAR") {
           var = wert.toFloat();
+          varAvailable = true; 
         }
 
         //***********************************************
