@@ -6,11 +6,13 @@ void changeMCvalue(bool mcUp) {
     Serial2.printf("%s%X\n", mce.c_str(), checksum); //set MCE to MCI
     mci = false;
   }
-  if (mcUp) {
+  if (mcUp && (millis() - mcSend) > 100) {
     Serial2.println("$PFV,M,U*58");  //McCready Up
+    mcSend = millis();
   }
-  else {
+  else if (!mcUp && (millis() - mcSend) > 100) {
     Serial2.println("$PFV,M,D*49");  //McCready Down
+    mcSend = millis();
   }
   nameSetting = "MC";
 }

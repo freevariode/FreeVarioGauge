@@ -60,8 +60,6 @@ void showBootScreen(String versionString) {
             dataString += serialString;
             serialString = Serial2.read();
           }
-          Serial.print("dataString: ");
-          Serial.println(dataString);
         } else {
           if ((!SourceIsXCSoar && !SourceIsLarus) && (baudDetect == 0) && (millis() - ChangeBaud <= 5000)) {
             Serial2.end();

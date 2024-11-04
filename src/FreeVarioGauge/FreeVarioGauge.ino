@@ -157,6 +157,7 @@ int requestDrawMenuLevel = 0;
 
 unsigned long lastTimeBoot = 0;
 unsigned long lastTimeReady = 0;
+unsigned long mcSend  = 0;
 
 // ************************************
 // ****  Initialize SPIFFS memory  ****
