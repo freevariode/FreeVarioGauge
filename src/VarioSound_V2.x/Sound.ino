@@ -35,7 +35,7 @@ void Sound(void *) {
         freqValue = sinusSetFrequency(freqValue);
         delay(1);
       }
-      else if (!varAvailable){
+      else if (!varAvailable && !updatemode){
         stopSinus();
         delay(1);
       }
