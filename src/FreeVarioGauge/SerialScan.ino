@@ -35,6 +35,7 @@ void SerialScan (void *p) {
             break;
           }
         }
+
         if (timeSystemReady < 2000) {
           Serial2.println("$PFV,M,S,0.5*59");
           Serial2.println("$PFV,Q,S,1013*6D");
@@ -45,11 +46,14 @@ void SerialScan (void *p) {
     //****************************
     //****  XCSoar is source  ****
     //****************************
-    if (dataString.startsWith("$PFV")) {
+    if (dataString.startsWith("$PFV,VAR")) {
       if (!SourceIsXCSoar) {
         SourceIsXCSoar = true;
+        SourceIsLarus = false;
       }
+    }
 
+    if (dataString.startsWith("$PFV") && SourceIsXCSoar == true) {
       if (serial2Error == true) {
         serial2Error = false;
         Serial.println("Error detected");
@@ -295,6 +299,7 @@ void SerialScan (void *p) {
         nameHight = "MSL";
         nameSetting = "Mute";
         SourceIsLarus = true;
+        SourceIsXCSoar = false;
       }
 
       if (serial2Error == true) {
@@ -330,6 +335,7 @@ void SerialScan (void *p) {
         nameHight = "MSL";
         nameSetting = "Mute";
         SourceIsLarus = true;
+        SourceIsXCSoar = false;
       }
 
       if (serial2Error == true) {
@@ -394,6 +400,7 @@ void SerialScan (void *p) {
         nameHight = "MSL";
         nameSetting = "Mute";
         SourceIsLarus = true;
+        SourceIsXCSoar = false;
       }
 
       if (serial2Error == true) {
@@ -448,20 +455,25 @@ void SerialScan (void *p) {
     //*****************************
     //****  Check Flight Mode  ****
     //*****************************
-    stf_mode_state = digitalRead(STF_MODE);
-    if (oldstf_mode_state != stf_mode_state || !WasSend) {
-      if (digitalRead(STF_MODE) == LOW && digitalRead(STF_AUTO) == LOW) {
-        Serial2.println("$POV,C,VAR*4F");  //Vario-Mode
-        WasSend = true;
-        stf_mode = "Vario";
-        oldstf_mode_state = digitalRead(STF_MODE);
+    if (SourceIsXCSoar == true) {
+      stf_mode_state = digitalRead(STF_MODE);
+      if (oldstf_mode_state != stf_mode_state || !WasSend) {
+        if (digitalRead(STF_MODE) == LOW && digitalRead(STF_AUTO) == LOW) {
+          Serial2.println("$POV,C,VAR*4F");  //Vario-Mode
+          WasSend = true;
+          stf_mode = "Vario";
+          oldstf_mode_state = digitalRead(STF_MODE);
+        }
+        else if (digitalRead(STF_MODE) == HIGH && digitalRead(STF_AUTO) == LOW) {
+          Serial2.println("$POV,C,STF*4B");  //STF-Mode
+          WasSend = true;
+          stf_mode = "STF";
+          oldstf_mode_state = digitalRead(STF_MODE);
+        }
       }
-      else if (digitalRead(STF_MODE) == HIGH && digitalRead(STF_AUTO) == LOW) {
-        Serial2.println("$POV,C,STF*4B");  //STF-Mode
-        WasSend = true;
-        stf_mode = "STF";
-        oldstf_mode_state = digitalRead(STF_MODE);
-      }
+    }
+    else if (SourceIsLarus == true) {
+      stf_mode = "Vario";
     }
 
     dataString = "";

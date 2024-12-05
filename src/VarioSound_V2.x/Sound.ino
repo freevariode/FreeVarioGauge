@@ -2,7 +2,6 @@ void Sound(void *) {
   while (true) {
     sf = (tas - stf) / 10;
 
-
     //***********************************
     //****  mute function using PTT  ****
     //***********************************
@@ -11,34 +10,33 @@ void Sound(void *) {
       delay(1);
     }
 
-
     //*********************************
     //****  calculate Vario sound  ****
     //*********************************
-     else if (digitalRead(STF_MODE) == LOW && startSound && varAvailable && var >= 0.5) {
-        startTimePulse = millis();
-        pulseTime = 0;
-        while (pulseTime < calculatePulse(var)) {
-          stopSinus();
-          pulseTime = millis() - startTimePulse;
-          delay(1);
-        }
-        do  {
-          calculateNewFreq(var, varOld);
-          freqValue = sinusSetFrequency(freqValue);
-          pulseTime = millis() - startTimePulse;
-          delay(1);
-        } while (pulseTime < (calculatePulse(var) + (calculatePulse(var) / 2)));
+    else if ((digitalRead(STF_MODE) == LOW || SourceIsLarus) && startSound && varAvailable && var >= 0.5) {
+      startTimePulse = millis();
+      pulseTime = 0;
+      while (pulseTime < calculatePulse(var)) {
+        stopSinus();
+        pulseTime = millis() - startTimePulse;
+        delay(1);
       }
-      else if (digitalRead(STF_MODE) == LOW && startSound && varAvailable && var < 0.5) {
+      do  {
         calculateNewFreq(var, varOld);
         freqValue = sinusSetFrequency(freqValue);
+        pulseTime = millis() - startTimePulse;
         delay(1);
-      }
-      else if (!varAvailable && !updatemode){
-        stopSinus();
-        delay(1);
-      }
+      } while (pulseTime < (calculatePulse(var) + (calculatePulse(var) / 2)));
+    }
+    else if ((digitalRead(STF_MODE) == LOW || SourceIsLarus) && startSound && varAvailable && var < 0.5) {
+      calculateNewFreq(var, varOld);
+      freqValue = sinusSetFrequency(freqValue);
+      delay(1);
+    }
+    else if (!varAvailable && !updatemode) {
+      stopSinus();
+      delay(1);
+    }
 
 
     //*******************************

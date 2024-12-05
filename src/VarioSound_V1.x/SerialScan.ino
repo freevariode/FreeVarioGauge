@@ -44,10 +44,14 @@ void SerialScan () {
       //****************************
       //****  XCSoar is source  ****
       //****************************
-      if (DataString.startsWith("$PFV")) {
+      if (DataString.startsWith("$PFV,VAR")) {
         if (!SourceIsXCSoar) {
           SourceIsXCSoar = true;
+          SourceIsLarus = false;
         }
+      }
+
+      if (DataString.startsWith("$PFV") && SourceIsXCSoar == true) {
         //Serial2.println(DataString);
         int pos = DataString.indexOf(',');
         DataString.remove(0, pos + 1);
@@ -130,6 +134,7 @@ void SerialScan () {
       if (DataString.startsWith("$PLAR")) {
         if (!SourceIsLarus) {
           SourceIsLarus = true;
+          SourceIsXCSoar = false;
         }
         if (DataString.startsWith("$PLARV")) {
           int pos0 = DataString.indexOf('*');

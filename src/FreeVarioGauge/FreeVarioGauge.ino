@@ -67,7 +67,7 @@ SemaphoreHandle_t xTFTSemaphore;
 long NOT_SET = -1;
 long pushButtonPressTime = NOT_SET;
 
-const String SOFTWARE_VERSION = "  V2.2 - 2024";
+const String SOFTWARE_VERSION = "  V2.3 - 2025";
 
 const char *host = "FreeVario_Displayboard";
 const char *ssid = "FV_Displayboard";
@@ -81,7 +81,7 @@ String soundIP = "";
 String nameSetting = "QNH";
 String nameSpeed = "NA";
 String nameHight = "NA";
-String stf_mode;
+String stf_mode = "Vario";
 String valueQnhAsString = "1013";
 String valueBugAsString = "0";
 String valueMuteAsString = "NA";

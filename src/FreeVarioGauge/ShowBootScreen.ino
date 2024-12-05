@@ -79,7 +79,6 @@ void showBootScreen(String versionString) {
             ChangeBaud = millis();
           }
         }
-        Serial.println("Warte auf Quelle");
         if ((dataString.startsWith("$PFV")) || (dataString.startsWith("$PLAR"))) {
           serial2IsReady = 1;
         }

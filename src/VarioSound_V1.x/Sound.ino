@@ -15,7 +15,7 @@ void Sound(void *) {
     //*********************************
     //****  calculate Vario sound  ****
     //*********************************
-    else if (digitalRead(STF_MODE) == LOW && var > 0.5 && startSound) {
+    else if ((digitalRead(STF_MODE) == LOW || SourceIsLarus) && var > 0.5 && startSound) {
       startTimePulse = millis();
       pulseTime = 0;
       while (pulseTime < calculatePulse(var)) {
@@ -42,7 +42,7 @@ void Sound(void *) {
         pulseTime = millis() - startTimePulse;
       } while (pulseTime < (calculatePulse(var) + (calculatePulse(var) / 2)));
     }
-    else if (digitalRead(STF_MODE) == LOW && var <= 0.5 && startSound) {
+    else if ((digitalRead(STF_MODE) == LOW || SourceIsLarus) && var <= 0.5 && startSound) {
       calculateNewFreq(var, varOld);
       int  i = 0;
       while (i < 8) {

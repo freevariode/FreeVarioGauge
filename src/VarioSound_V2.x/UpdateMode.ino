@@ -3,12 +3,6 @@ void UpdateMode() {
   //*********************************
   //****  Check for update mode  ****
   //*********************************
-  if (Loopcount == 0) {
-    Loopcount = 1;
-    changeMode = digitalRead(STF_MODE);
-    oldChangeMode = changeMode;
-    startTime = millis();
-  }
 
   while (millis() - startTime <= loopTime) {
     varioSchalter_state = digitalRead(Varioschalter);
@@ -18,6 +12,12 @@ void UpdateMode() {
     }
     else if ((varioSchalter_state == 1) && (stfSchalter_state == 0)) {
       digitalWrite(STF_MODE, HIGH);
+    }
+    if (Loopcount == 0) {
+      Loopcount = 1;
+      changeMode = digitalRead(STF_MODE);
+      oldChangeMode = changeMode;
+      startTime = millis();
     }
     changeMode = digitalRead(STF_MODE);
     if (oldChangeMode != changeMode) {

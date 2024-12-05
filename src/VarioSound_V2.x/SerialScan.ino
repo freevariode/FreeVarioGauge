@@ -44,11 +44,14 @@ void SerialScan () {
       //****************************
       //****  XCSoar is source  ****
       //****************************
-
-      if (DataString.startsWith("$PFV")) {
+      if (DataString.startsWith("$PFV,VAR")) {
         if (!SourceIsXCSoar) {
           SourceIsXCSoar = true;
+          SourceIsLarus = false;
         }
+      }
+
+      if (DataString.startsWith("$PFV") && SourceIsXCSoar == true) {
         //Serial2.println(DataString);
         int pos = DataString.indexOf(',');
         DataString.remove(0, pos + 1);
@@ -62,7 +65,7 @@ void SerialScan () {
         //**************************************
         if (variable == "VAR") {
           var = wert.toFloat();
-          varAvailable = true; 
+          varAvailable = true;
         }
 
         //***********************************************
@@ -127,10 +130,10 @@ void SerialScan () {
       //***************************
       //****  Larus is source  ****
       //***************************
-
       if (DataString.startsWith("$PLAR")) {
-        if (!SourceIsLarus) {
+        if (!SourceIsLarus == true) {
           SourceIsLarus = true;
+          SourceIsXCSoar = false;
         }
         if (DataString.startsWith("$PLARV")) {
           int pos0 = DataString.indexOf('*');
@@ -148,6 +151,7 @@ void SerialScan () {
             int pos1 = dataToCheck.indexOf(',');                   //findet den Ort des ersten ,
             String VAR = dataToCheck.substring(0, pos1);           //erfasst das aktuelle Steigen
             var = VAR.toFloat();                                   //wandelt das aktuelle Steigen in float
+            varAvailable = true;
 
             int pos2 = dataToCheck.indexOf(',', pos1 + 1);         //findet den Ort des zweiten ,
             int pos3 = dataToCheck.indexOf(',', pos2 + 1);         //findet den Ort des dritten ,
