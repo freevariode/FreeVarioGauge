@@ -22,12 +22,18 @@ void SerialScan () {
       else {
         if ((!SourceIsXCSoar && !SourceIsLarus) && (baudDetect == 0) && (millis() - ChangeBaud <= 5000)) {
           Serial2.end();
+          Serial.println("Looking for XCSoar");
+          Serial.println("baud rate is set to 115200");
           Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
+          delay(500);
           baudDetect = 1;
         }
         else if ((!SourceIsXCSoar && !SourceIsLarus) && (baudDetect == 1) &&  (millis() - ChangeBaud > 5000) && (millis() - ChangeBaud <= 10000)) {
           Serial2.end();
+          Serial.println("Looking for Larus");
+          Serial.println("baud rate is set to 38400");
           Serial2.begin(38400, SERIAL_8N1, RXD2, TXD2);
+          delay(500);
           baudDetect = 0;
         }
         else if ((!SourceIsXCSoar && !SourceIsLarus) && (millis() - ChangeBaud > 10000)) {
