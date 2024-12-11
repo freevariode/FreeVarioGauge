@@ -79,7 +79,7 @@ void showBootScreen(String versionString) {
             ChangeBaud = millis();
           }
         }
-        if ((dataString.startsWith("$PFV")) || (dataString.startsWith("$PLAR"))) {
+        if ((dataString.startsWith("$PFV,VAR")) || (dataString.startsWith("$PFV,VAN")) || (dataString.startsWith("$PLAR"))) {
           serial2IsReady = 1;
         }
         dataString = "";

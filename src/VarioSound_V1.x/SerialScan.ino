@@ -44,7 +44,7 @@ void SerialScan () {
       //****************************
       //****  XCSoar is source  ****
       //****************************
-      if (DataString.startsWith("$PFV,VAR")) {
+      if ((DataString.startsWith("$PFV,VAR")) || (DataString.startsWith("$PFV,VAN"))) {
         if (!SourceIsXCSoar) {
           SourceIsXCSoar = true;
           SourceIsLarus = false;
