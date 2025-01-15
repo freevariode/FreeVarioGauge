@@ -44,7 +44,7 @@ ESP32Encoder Vario_Enc;
 #define InnerRadius 130
 #define xCenter 160
 #define yCenter 160
-#define BLUE 0x04df 
+#define BLUE 0x04df
 
 static TFT_eSPI tft = TFT_eSPI();
 TFT_eSprite nameOfField = TFT_eSprite(&tft);
@@ -93,10 +93,14 @@ String valueTasAsString = "0";
 String valueVaaAsString = "+0.0";
 String valueVanAsString = "+0.0";
 String valueHigAsString = "0";
+String valueFLAsString = "0";
 String valueHagAsString = "0";
 String valueAwsAsString = "0";
 String valueCwsAsString = "0";
 String valueMacAsString = "0.0";
+String voltage = "0.0";
+String UTC = "00:00";
+String valueVoltageAsString = "0.0";
 
 extern uint16_t logoOV[];
 

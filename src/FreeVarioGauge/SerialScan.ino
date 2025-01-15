@@ -5,6 +5,8 @@ void SerialScan (void *p) {
   float valueGrsAsFloat = 0;
   float valueHagAsFloat = 0;
   float valueHigAsFloat = 0;
+  float valueFLAsFloat = 0;
+  float valueVoltageAsFloat = 0;
   float tem = 0;
   float hea = 0;
   double stfValue = 0;
@@ -296,8 +298,7 @@ void SerialScan (void *p) {
 
       if (!SourceIsLarus) {
         nameSpeed = "TAS";
-        nameHight = "MSL";
-        nameSetting = "Mute";
+        nameSetting = "UTC";
         SourceIsLarus = true;
         SourceIsXCSoar = false;
       }
@@ -332,8 +333,7 @@ void SerialScan (void *p) {
 
       if (!SourceIsLarus) {
         nameSpeed = "TAS";
-        nameHight = "MSL";
-        nameSetting = "Mute";
+        nameSetting = "UTC";
         SourceIsLarus = true;
         SourceIsXCSoar = false;
       }
@@ -352,6 +352,7 @@ void SerialScan (void *p) {
       int checksum = calculateChecksum(dataToCheck);
       String checksumString = String(checksum, HEX);
       if (CheckSum == checksumString) {
+
         lastTimeSerial2 = millis();
         //Serial2.println(dataString);
         dataToCheck.remove(0, 7);
@@ -377,16 +378,19 @@ void SerialScan (void *p) {
         int pos3 = dataToCheck.indexOf(',', pos2 + 1);         //findet den Ort des dritten ,
         String HIG = dataToCheck.substring(pos2 + 1, pos3);    //erfasst die barometrischen Höhe
         valueHigAsFloat = HIG.toFloat();                       //wandelt die barometrischen Höhe in float
+        valueFLAsFloat = valueHigAsFloat / 30;                 //errechnet die Flugfläche
         char buf1[20];
+        char buf2[20];
         // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
         valueHigAsString = dtostrf(valueHigAsFloat, 4, 0, buf1);
+        valueFLAsString = dtostrf(valueFLAsFloat, 4, 0, buf2);
 
         int pos4 = dataToCheck.indexOf(',', pos3 + 1);         //findet den Ort des vierten ,
         String TAS = dataToCheck.substring(pos3 + 1, pos4);    //erfasst die TAS
         valueTasAsFloat = TAS.toFloat();                       //wandelt die TAS in float
-        char buf2[20];
+        char buf3[20];
         // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
-        valueTasAsString = dtostrf(valueTasAsFloat, 3, 0, buf2);
+        valueTasAsString = dtostrf(valueTasAsFloat, 3, 0, buf3);
       }
     }
 
@@ -397,8 +401,7 @@ void SerialScan (void *p) {
 
       if (!SourceIsLarus) {
         nameSpeed = "TAS";
-        nameHight = "MSL";
-        nameSetting = "Mute";
+        nameSetting = "UTC";
         SourceIsLarus = true;
         SourceIsXCSoar = false;
       }
@@ -448,6 +451,80 @@ void SerialScan (void *p) {
       }
     }
 
+    //***********************************
+    //****  analyse battery voltage  ****
+    //***********************************
+    if (dataString.startsWith("$PLARB")) {
+
+      if (!SourceIsLarus) {
+        nameSpeed = "TAS";
+        nameSetting = "UTC";
+        SourceIsLarus = true;
+        SourceIsXCSoar = false;
+      }
+
+      if (serial2Error == true) {
+        serial2Error = false;
+        Serial.println("Error detected");
+      }
+
+      int pos0 = dataString.indexOf('*');
+      String dataToCheck = dataString.substring(0, pos0);
+      dataString.remove(0, pos0 + 1);
+      String CheckSum = dataString;
+      CheckSum.toLowerCase();
+      CheckSum.trim();
+      int checksum = calculateChecksum(dataToCheck);
+      String checksumString = String(checksum, HEX);
+      if (CheckSum == checksumString) {
+        lastTimeSerial2 = millis();
+        //Serial2.println(dataString);
+        dataToCheck.remove(0, 7);
+        int pos1 = dataToCheck.indexOf(',');                   //findet den Ort des ersten ,
+        voltage = dataToCheck.substring(0, pos1);              //erfasst die Spannung
+        float valueVoltageAsFloat = voltage.toFloat();         //wandelt die Spannung in float
+        char buf[20];
+        // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
+        valueVoltageAsString = dtostrf(valueVoltageAsFloat, 3, 1, buf);
+      }
+    }
+
+    //***********************
+    //****  analyse UTC  ****
+    //***********************
+    if (dataString.startsWith("$GPRMC")) {
+
+      if (!SourceIsLarus) {
+        nameSpeed = "TAS";
+        nameSetting = "UTC";
+        SourceIsLarus = true;
+        SourceIsXCSoar = false;
+      }
+
+      if (serial2Error == true) {
+        serial2Error = false;
+        Serial.println("Error detected");
+      }
+
+      int pos0 = dataString.indexOf('*');
+      String dataToCheck = dataString.substring(0, pos0);
+      dataString.remove(0, pos0 + 1);
+      String CheckSum = dataString;
+      CheckSum.toLowerCase();
+      CheckSum.trim();
+      int checksum = calculateChecksum(dataToCheck);
+      String checksumString = String(checksum, HEX);
+      if (CheckSum == checksumString) {
+        lastTimeSerial2 = millis();
+        //Serial2.println(dataString);
+        dataToCheck.remove(0, 7);
+        int pos1 = dataToCheck.indexOf(',');                   //findet den Ort des ersten ,
+        String UTCHour = dataToCheck.substring(0, 2);          //erfasst die Stunde
+        String UTCMinute = dataToCheck.substring(2, 4);        //erfasst die Minuten
+        UTC = UTCHour + ":" + UTCMinute;                //fasst die Zeit zusammen
+      }
+    }
+
     else if ((millis() - lastTimeSerial2) > 10000) {
       serial2Error = true;
     }
@@ -456,16 +533,21 @@ void SerialScan (void *p) {
     //****  Check Flight Mode  ****
     //*****************************
     if (SourceIsXCSoar == true) {
+      if (nameHight == "FL") {
+        nameHight = "MSL";
+      }
       stf_mode_state = digitalRead(STF_MODE);
       if (oldstf_mode_state != stf_mode_state || !WasSend) {
         if (digitalRead(STF_MODE) == LOW && digitalRead(STF_AUTO) == LOW) {
           Serial2.println("$POV,C,VAR*4F");  //Vario-Mode
+          Serial2.println("$PFV,F,C*61");    //Vario-Mode
           WasSend = true;
           stf_mode = "Vario";
           oldstf_mode_state = digitalRead(STF_MODE);
         }
         else if (digitalRead(STF_MODE) == HIGH && digitalRead(STF_AUTO) == LOW) {
           Serial2.println("$POV,C,STF*4B");  //STF-Mode
+          Serial2.println("$PFV,F,S*71");    //STF-Mode
           WasSend = true;
           stf_mode = "STF";
           oldstf_mode_state = digitalRead(STF_MODE);
@@ -473,6 +555,9 @@ void SerialScan (void *p) {
       }
     }
     else if (SourceIsLarus == true) {
+      if (nameHight == "AGL") {
+        nameHight = "MSL";
+      }
       stf_mode = "Vario";
     }
 

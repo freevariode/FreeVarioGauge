@@ -22,7 +22,7 @@ void settingStandardValueType () {
     nameSetting = "MC";
   }
   else {
-    nameSetting = "Mute";
+    nameSetting = "UTC";
   }
 }
 
@@ -34,10 +34,10 @@ void Menu () {
   //****  Calculate  Actions  ****
   //******************************
 
-  if (menuWasTriggered && encoderRight && !SourceIsLarus) {
+  if (menuWasTriggered && encoderRight) {
     selectedMenu ++;
   }
-  else if  (menuWasTriggered && encoderLeft && !SourceIsLarus) {
+  else if  (menuWasTriggered && encoderLeft) {
     selectedMenu --;
   }
 
@@ -47,21 +47,25 @@ void Menu () {
   else if (selectedMenu < MENU_SPEED_TYP && !SourceIsLarus) {
     selectedMenu = MENU_VALUE_TYP;
   }
-  else if (menuWasTriggered  && SourceIsLarus) {  //beim Larus werden das Speed- und das Hightmenü übersprungen. Es geht direkt zu den Einstellungen von QNH, Bug. etc.
-    subMenuTriggered = true;
-    menuWasTriggered = false;
+  else if (selectedMenu > MENU_VALUE_TYP && SourceIsLarus) {
+    selectedMenu = MENU_HIGHT_TYP;
+  }
+  else if (selectedMenu < MENU_HIGHT_TYP && SourceIsLarus) {
     selectedMenu = MENU_VALUE_TYP;
-    settingStartValueType();
-    DrawMenu(selectedMenu, 2);
-    setDrawMenuLevel(selectedMenu, 2);
   }
 
   if (pushButtonIsLongpress && !pushButtonPressed && !menuWasTriggered && !subMenuTriggered && !subMenuLevelTwoTriggered && !encoderWasMoved && timeSystemRuns > TIME_SINCE_BOOT) {
     menuWasTriggered = true;
+    if (SourceIsLarus) {
+      selectedMenu = MENU_HIGHT_TYP;
+    }
+    else {
+      selectedMenu = MENU_SPEED_TYP;
+    }
+    setDrawMenuLevel(selectedMenu, 1);
     menuActiveSince = millis(); // set time to now
     // Wait for release of pushButton
     while (digitalRead(VE_PB) == LOW) {}
-    setDrawMenuLevel(selectedMenu, 1);
     pushButtonIsLongpress = false;
   }
 
@@ -154,9 +158,7 @@ void Menu () {
     //Serial.println("eingestellter Wert wird gespeichert");
     subMenuLevelTwoTriggered = false;
     settingStandardValueType();
-    if (!SourceIsLarus) {
-      selectedMenu = MENU_SPEED_TYP;
-    }
+    selectedMenu = MENU_SPEED_TYP;
     setDrawMenuLevel(selectedMenu, 0);
   }
 
@@ -164,19 +166,34 @@ void Menu () {
   if ((millis() - menuActiveSince) > 10000 && subMenuLevelTwoTriggered) {
     subMenuLevelTwoTriggered = false;
     settingStandardValueType();
-    selectedMenu = MENU_SPEED_TYP;
+    if (SourceIsLarus) {
+      selectedMenu = MENU_HIGHT_TYP;
+    }
+    else {
+      selectedMenu = MENU_SPEED_TYP;
+    }
     setDrawMenuLevel(selectedMenu, 0);
   }
   else if ((millis() - menuActiveSince) > 10000 && subMenuTriggered) {
     subMenuTriggered = false;
     settingStandardValueType();
-    selectedMenu = MENU_SPEED_TYP;
+    if (SourceIsLarus) {
+      selectedMenu = MENU_HIGHT_TYP;
+    }
+    else {
+      selectedMenu = MENU_SPEED_TYP;
+    }
     setDrawMenuLevel(selectedMenu, 0);
   }
   else if ((millis() - menuActiveSince) > 10000 && menuWasTriggered) {
     menuWasTriggered = false;
     settingStandardValueType();
-    selectedMenu = MENU_SPEED_TYP;
+    if (SourceIsLarus) {
+      selectedMenu = MENU_HIGHT_TYP;
+    }
+    else {
+      selectedMenu = MENU_SPEED_TYP;
+    }
     setDrawMenuLevel(selectedMenu, 0);
   }
 }

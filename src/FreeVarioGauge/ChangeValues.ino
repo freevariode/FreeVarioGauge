@@ -30,12 +30,19 @@ void changeSpeedOption () {
 }
 
 void changeHighOption () {
-  if (nameHight == "AGL") {
+  if (nameHight == "AGL" && !SourceIsLarus) {
     nameHight = "MSL";
   }
-  else {
+  else if (nameHight == "MSL" && !SourceIsLarus) {
     nameHight = "AGL";
   }
+  else if (nameHight == "MSL" && SourceIsLarus) {
+    nameHight = "FL";
+  }
+  else if (nameHight == "FL" && SourceIsLarus) {
+    nameHight = "MSL";
+  }
+
   prefs.begin("settings", false);
   prefs.putString("nameHight", nameHight);
   prefs.end();
@@ -48,7 +55,7 @@ void changeValueOptionRight () {
   else if ( nameSetting == "Bug" && !SourceIsLarus) {
     nameSetting = "ATTEN";
   }
-  else if ( nameSetting == "ATTEN") {
+  else if ( nameSetting == "ATTEN" && !SourceIsLarus) {
     nameSetting = "Mute";
   }
   else if ( nameSetting == "Mute") {
@@ -61,7 +68,7 @@ void changeValueOptionRight () {
     nameSetting = "QNH";
   }
   else if ( nameSetting == "STF" && SourceIsLarus) {
-    nameSetting = "ATTEN";
+    nameSetting = "Mute";
   }
 }
 
@@ -75,14 +82,14 @@ void changeValueOptionLeft () {
   else if ( nameSetting == "Wind") {
     nameSetting = "Mute";
   }
-  else if ( nameSetting == "Mute") {
+  else if ( nameSetting == "Mute" && !SourceIsLarus) {
     nameSetting = "ATTEN";
+  }
+  else if ( nameSetting == "Mute"  && SourceIsLarus) {
+    nameSetting = "STF";
   }
   else if ( nameSetting == "ATTEN"  && !SourceIsLarus) {
     nameSetting = "Bug";
-  }
-  else if ( nameSetting == "ATTEN"  && SourceIsLarus) {
-    nameSetting = "STF";
   }
   else if ( nameSetting == "Bug"  && !SourceIsLarus) {
     nameSetting = "QNH";
