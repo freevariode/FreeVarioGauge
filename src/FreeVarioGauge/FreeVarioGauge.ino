@@ -100,6 +100,8 @@ String valueCwsAsString = "0";
 String valueMacAsString = "0.0";
 String voltage = "0.0";
 String UTC = "00:00";
+String UTCHour = "00";
+String UTCMinute = "00";
 String valueVoltageAsString = "0.0";
 
 extern uint16_t logoOV[];
@@ -158,6 +160,7 @@ int offset = 0;
 int selectedMenu = MENU_SPEED_TYP;
 int requestDrawMenu = 1;
 int requestDrawMenuLevel = 0;
+int TimeDifference = 0;
 
 unsigned long lastTimeBoot = 0;
 unsigned long lastTimeReady = 0;

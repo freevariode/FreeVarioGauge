@@ -68,6 +68,9 @@ void changeValueOptionRight () {
     nameSetting = "QNH";
   }
   else if ( nameSetting == "STF" && SourceIsLarus) {
+    nameSetting = "TimeDifference";
+  }
+  else if ( nameSetting == "TimeDifference" && SourceIsLarus) {
     nameSetting = "Mute";
   }
 }
@@ -86,6 +89,9 @@ void changeValueOptionLeft () {
     nameSetting = "ATTEN";
   }
   else if ( nameSetting == "Mute"  && SourceIsLarus) {
+    nameSetting = "TimeDifference";
+  }
+  else if ( nameSetting == "TimeDifference"  && SourceIsLarus) {
     nameSetting = "STF";
   }
   else if ( nameSetting == "ATTEN"  && !SourceIsLarus) {
@@ -141,6 +147,18 @@ void changeLevelTwoMenu (bool changeLevelTwoValue) {
     char buf[20];
     // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
     Serial2.printf("%s%X\n", attStr.c_str(), checksum);
+  }
+  
+  if (nameSetting == "TimeDifference") {
+    if (changeLevelTwoValue && TimeDifference < 12) {
+      TimeDifference = TimeDifference + 1;
+    }
+    else if (!changeLevelTwoValue && TimeDifference > -12) {
+      TimeDifference = TimeDifference - 1;
+    }
+    prefs.begin("settings", false);
+    prefs.putUInt("TimeDifference", TimeDifference);
+    prefs.end();
   }
 }
 void changeLevelTwoMenuTurn (bool changeLevelTwoValue) {

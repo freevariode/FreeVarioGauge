@@ -22,7 +22,7 @@ void settingStandardValueType () {
     nameSetting = "MC";
   }
   else {
-    nameSetting = "UTC";
+    nameSetting = "Time";
   }
 }
 

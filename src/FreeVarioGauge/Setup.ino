@@ -43,6 +43,7 @@ void setup() {
   valueSTFAsInt = prefs.getUInt("STF", 1);
   nameSpeed = prefs.getString("nameSpeed", "GS");
   nameHight = prefs.getString("nameHight", "MSL");
+  TimeDifference = prefs.getUInt("TimeDifference", 0);
   prefs.end();
 
   valueAttenAsString = String(valueAttenAsInt);

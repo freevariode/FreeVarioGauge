@@ -244,14 +244,21 @@ void ValueRefresh(void *parameter) {
       }
     }
 
-    else if (nameSetting == "UTC") {
+    else if (nameSetting == "Time") {
+      int TimeHour = UTCHour.toInt() + TimeDifference;
+      String Time = String(TimeHour) + ":" + UTCMinute;
+      String TimeType = "UTC";
+      if (TimeDifference != 0) {
+        TimeType = "Local";
+      }
+
       if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
       {
         if ((requestDrawMenuLevel == 1 ) && (requestDrawMenu == 3)) {
-          DrawText(nameOfField, TFT_RED, "small", "UTC", UTC, 35, 25, 103, 83, 210 + offset);
+          DrawText(nameOfField, TFT_RED, "small", TimeType, Time, 35, 25, 103, 83, 210 + offset);
         }
         else {
-          DrawText(nameOfField, TFT_WHITE, "small", "UTC", UTC, 35, 25, 103, 83, 210 + offset);
+          DrawText(nameOfField, TFT_WHITE, "small", TimeType, Time, 35, 25, 103, 83, 210 + offset);
         }
         xSemaphoreGive(xTFTSemaphore);
       }
@@ -336,6 +343,23 @@ void ValueRefresh(void *parameter) {
         }
         else {
           DrawText(nameOfField, TFT_WHITE, "small", "STF", valueSetting, 39, 25, 99, 83, 210 + offset);
+        }
+        xSemaphoreGive(xTFTSemaphore);
+      }
+    }
+
+    else if (nameSetting == "TimeDifference") {
+      if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+      {
+        valueSetting = String(TimeDifference);
+        if (TimeDifference >= 0) {
+          valueSetting = "+" + String(TimeDifference);
+        }
+        if ((requestDrawMenuLevel == 2 ) && (requestDrawMenu == 3) || (requestDrawMenuLevel == 3 ) && (requestDrawMenu == 3)) {
+          DrawText(nameOfField, TFT_RED, "small", "Diff.", valueSetting, 39, 25, 99, 83, 210 + offset);
+        }
+        else {
+          DrawText(nameOfField, TFT_WHITE, "small", "Diff.", valueSetting, 39, 25, 99, 83, 210 + offset);
         }
         xSemaphoreGive(xTFTSemaphore);
       }

@@ -298,7 +298,7 @@ void SerialScan (void *p) {
 
       if (!SourceIsLarus) {
         nameSpeed = "TAS";
-        nameSetting = "UTC";
+        nameSetting = "Time";
         SourceIsLarus = true;
         SourceIsXCSoar = false;
       }
@@ -333,7 +333,7 @@ void SerialScan (void *p) {
 
       if (!SourceIsLarus) {
         nameSpeed = "TAS";
-        nameSetting = "UTC";
+        nameSetting = "Time";
         SourceIsLarus = true;
         SourceIsXCSoar = false;
       }
@@ -401,7 +401,7 @@ void SerialScan (void *p) {
 
       if (!SourceIsLarus) {
         nameSpeed = "TAS";
-        nameSetting = "UTC";
+        nameSetting = "Time";
         SourceIsLarus = true;
         SourceIsXCSoar = false;
       }
@@ -458,7 +458,7 @@ void SerialScan (void *p) {
 
       if (!SourceIsLarus) {
         nameSpeed = "TAS";
-        nameSetting = "UTC";
+        nameSetting = "Time";
         SourceIsLarus = true;
         SourceIsXCSoar = false;
       }
@@ -496,7 +496,7 @@ void SerialScan (void *p) {
 
       if (!SourceIsLarus) {
         nameSpeed = "TAS";
-        nameSetting = "UTC";
+        nameSetting = "Time";
         SourceIsLarus = true;
         SourceIsXCSoar = false;
       }
@@ -519,9 +519,8 @@ void SerialScan (void *p) {
         //Serial2.println(dataString);
         dataToCheck.remove(0, 7);
         int pos1 = dataToCheck.indexOf(',');                   //findet den Ort des ersten ,
-        String UTCHour = dataToCheck.substring(0, 2);          //erfasst die Stunde
-        String UTCMinute = dataToCheck.substring(2, 4);        //erfasst die Minuten
-        UTC = UTCHour + ":" + UTCMinute;                //fasst die Zeit zusammen
+        UTCHour = dataToCheck.substring(0, 2);                 //erfasst die Stunde
+        UTCMinute = dataToCheck.substring(2, 4);               //erfasst die Minuten
       }
     }
 
