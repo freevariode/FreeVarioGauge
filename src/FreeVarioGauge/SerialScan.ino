@@ -294,7 +294,7 @@ void SerialScan (void *p) {
     //****************************
     //****  analyse headingd  ****
     //****************************
-    if (dataString.startsWith("$HCHDT")) {
+    if (dataString.startsWith("$PLARA")) {
 
       if (!SourceIsLarus) {
         nameSpeed = "TAS";
@@ -321,7 +321,8 @@ void SerialScan (void *p) {
         //Serial2.println(dataString);
         dataToCheck.remove(0, 7);
         int pos1 = dataToCheck.indexOf(',');                   //findet den Ort des ersten ,
-        String HEA = dataToCheck.substring(0, pos1);           //erfasst das aktuelle Heading
+        int pos2 = dataToCheck.indexOf(',', pos1 + 1);         //findet den Ort des zweiten ,
+        String HEA = dataToCheck.substring(pos2 + 1, pos0);    //erfasst das aktuelle Heading
         hea = HEA.toFloat();                                   //wandelt das aktuelle Heading in float
       }
     }
@@ -435,14 +436,14 @@ void SerialScan (void *p) {
         String WTYP = dataToCheck.substring(pos2 + 1, pos3);   //erfasst die Windart
 
         if (WTYP == "I") {                                     //legt Windart fest
-          valueCwdAsFloat = valueWdAsFloat + 180 - hea;
+          valueCwdAsFloat = valueWdAsFloat - hea + 180;
           valueCwsAsFloat = valueWsAsFloat;
           char buf[20];
           // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
           valueCwsAsString = dtostrf(valueCwsAsFloat, 3, 0, buf);
         }
         else if (WTYP == "A") {
-          valueAwdAsFloat = valueWdAsFloat + 180 - hea;
+          valueAwdAsFloat = valueWdAsFloat - hea + 180;
           valueAwsAsFloat = valueWsAsFloat;
           char buf[20];
           // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);

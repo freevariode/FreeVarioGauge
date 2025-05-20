@@ -40,7 +40,7 @@ const int Varioschalter = 15;         // Connect button to GND, connect 10 kOhm 
 const int STFSchalter = 5;            // Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
 const int STFAuto = 19;               // Flap connection; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin´
 
-const String SOFTWARE_VERSION = "  V2.4 - 2025";
+const String SOFTWARE_VERSION = "  V2.4.1 - 2025";
 
 const char *host = "FreeVario_Soundboard";
 const char *ssid = "FV_Soundboard";
