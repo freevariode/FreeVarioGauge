@@ -44,7 +44,7 @@ void UpdateMode() {
       Serial2.end();
       WiFi.softAP(ssid, password);
       delay(100);
-      IPAddress Ip(192, 168, 3, 1);    //setto IP Access Point same as gateway
+      IPAddress Ip(192, 168, 3, 1);   //setto IP Access Point same as gateway
       IPAddress NMask(255, 255, 255, 0);
       WiFi.softAPConfig(Ip, Ip, NMask);
       IPAddress myIP = WiFi.softAPIP();
@@ -70,7 +70,7 @@ void UpdateMode() {
         delay(500);
       }
       //use mdns for host name resolution//
-      if (!MDNS.begin(host)) { //http://esp32.local
+      if (!MDNS.begin(host)) {  //http://esp32.local
         Serial.println("Error setting up MDNS responder!");
         while (1) {
           delay(1000);
@@ -103,10 +103,22 @@ void UpdateMode() {
       }, []() {
         HTTPUpload& upload = server.upload();
         if (upload.status == UPLOAD_FILE_START) {
-          Serial.printf("Update: %s\n", upload.filename.c_str());
-          if (!Update.begin(UPDATE_SIZE_UNKNOWN)) { //start with max available size
-            Update.printError(Serial);
+          String filename = upload.filename;
+          if (filename.endsWith(".bin")) {
+            Serial.printf("Update: %s\n", filename.c_str());
+            if (!Update.begin(UPDATE_SIZE_UNKNOWN)) { //start with max available size
+              Update.printError(Serial);
+            }
+          } else if (filename.indexOf("spiffs") != -1) {
+            Serial.printf("Update SPIFFS: %s\n", filename.c_str());
+            size_t spiffsSize = SPIFFS.totalBytes();    // Get the size of the SPIFFS partition
+            if (!Update.begin(spiffsSize, U_SPIFFS)) {  // Start update of SPIFFS partition
+              Update.printError(Serial);
+            }
+          } else {
+            Serial.println("Error: filename must end with '.bin' or contain 'spiffs'");
           }
+
         } else if (upload.status == UPLOAD_FILE_WRITE) {
           // flashing firmware to ESP//
           if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
