@@ -16,7 +16,7 @@
 
 #define STF_MODE 13
 #define STF_AUTO 33
-#define XC_WK 14                      // Automatic mode through flaps or XCSoar; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
+//#define Free 14                      // Automatic mode through flaps or XCSoar; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
 #define PTT 27                        // VarioSound off by pressing the radio button; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
 #define FNC_PIN 4                     // Can be any digital IO pin                    
 
@@ -40,7 +40,7 @@ const int Varioschalter = 15;         // Connect button to GND, connect 10 kOhm 
 const int STFSchalter = 5;            // Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
 const int STFAuto = 19;               // Flap connection; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin´
 
-const String SOFTWARE_VERSION = "  V2.1.1 - 2024";
+const String SOFTWARE_VERSION = "  V2.4.1 - 2025";
 
 const char *host = "FreeVario_Soundboard";
 const char *ssid = "FV_Soundboard";
@@ -56,6 +56,7 @@ String valueTasAsString = "0";
 
 int valueMuteAsInt = 1;               // mute via PTT is active
 int valueAttenAsInt = 2;              // Attenuation ist set
+int valueSTFAsInt = 1;
 int count = 0;                        // Counter for STF Sound
 int i = 0;
 int n = 0;

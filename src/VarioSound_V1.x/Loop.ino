@@ -1,13 +1,13 @@
 void loop() {
-//***********************************
-//****  Analysis automatic mode  ****
-//***********************************
+  //***********************************
+  //****  Analysis automatic mode  ****
+  //***********************************
   varioSchalter_state = digitalRead(Varioschalter);
   stfSchalter_state = digitalRead(STFSchalter);
   stfAuto_state = digitalRead(STFAuto);
-  xc_WK_state = digitalRead(XC_WK);
+  xc_WK_state = valueSTFAsInt;
 
-  if (!SourceIsLarus) {
+  if (SourceIsXCSoar == true) {
     if ((varioSchalter_state == 1) && (stfSchalter_state == 1)) {
       digitalWrite(STF_AUTO, HIGH);
     }
@@ -26,7 +26,11 @@ void loop() {
              ((varioSchalter_state == 1) && (stfSchalter_state == 0))) {
       digitalWrite(STF_MODE, HIGH);
     }
-    UpdateMode();
-    SerialScan ();
   }
+  else if (SourceIsLarus == true) {
+    digitalWrite(STF_MODE, LOW);
+    digitalWrite(STF_MODE, LOW);
+  }
+  UpdateMode();
+  SerialScan ();
 }

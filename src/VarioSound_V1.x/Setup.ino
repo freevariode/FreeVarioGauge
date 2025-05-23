@@ -10,7 +10,7 @@ void setup() {
   gen.EnableOutput(true);             // Turn ON the output - it defaults to OFF
   AD9833 gen(FNC_PIN);                // Defaults to 25MHz internal reference frequency
   pinMode(STF_MODE, OUTPUT);
-  pinMode(XC_WK, INPUT_PULLUP);
+  //pinMode(Free, INPUT_PULLUP);
   pinMode(PTT, INPUT_PULLUP);
   pinMode(Varioschalter, INPUT_PULLUP);
   pinMode(STFSchalter, INPUT_PULLUP);

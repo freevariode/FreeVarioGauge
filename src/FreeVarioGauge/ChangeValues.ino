@@ -1,16 +1,18 @@
 void changeMCvalue(bool mcUp) {
-String mce;
+  String mce;
   if (mci == true) {
     mce = ("$PFV,M,S," + String((float)valueMacAsFloat) + "*");
     int checksum = calculateChecksum(mce);
     Serial2.printf("%s%X\n", mce.c_str(), checksum); //set MCE to MCI
     mci = false;
   }
-  if (mcUp) {
+  if (mcUp && (millis() - mcSend) > 100) {
     Serial2.println("$PFV,M,U*58");  //McCready Up
+    mcSend = millis();
   }
-  else {
+  else if (!mcUp && (millis() - mcSend) > 100) {
     Serial2.println("$PFV,M,D*49");  //McCready Down
+    mcSend = millis();
   }
   nameSetting = "MC";
 }
@@ -28,57 +30,75 @@ void changeSpeedOption () {
 }
 
 void changeHighOption () {
-  if (nameHight == "AGL") {
+  if (nameHight == "AGL" && !SourceIsLarus) {
     nameHight = "MSL";
   }
-  else {
+  else if (nameHight == "MSL" && !SourceIsLarus) {
     nameHight = "AGL";
   }
+  else if (nameHight == "MSL" && SourceIsLarus) {
+    nameHight = "FL";
+  }
+  else if (nameHight == "FL" && SourceIsLarus) {
+    nameHight = "MSL";
+  }
+
   prefs.begin("settings", false);
   prefs.putString("nameHight", nameHight);
   prefs.end();
 }
 
 void changeValueOptionRight () {
-  if ( nameSetting == "Bug" && !SourceIsLarus) {
-    nameSetting = "ATTEN";
-  }
-  else if ( nameSetting == "QNH" && !SourceIsLarus) {
+  if ( nameSetting == "QNH" && !SourceIsLarus) {
     nameSetting = "Bug";
   }
-  else if ( nameSetting == "ATTEN") {
+  else if ( nameSetting == "Bug" && !SourceIsLarus) {
+    nameSetting = "ATTEN";
+  }
+  else if ( nameSetting == "ATTEN" && !SourceIsLarus) {
     nameSetting = "Mute";
   }
   else if ( nameSetting == "Mute") {
     nameSetting = "Wind";
   }
-
-  else if ( nameSetting == "Wind" && !SourceIsLarus) {
+  else if ( nameSetting == "Wind") {
+    nameSetting = "STF";
+  }
+  else if ( nameSetting == "STF" && !SourceIsLarus) {
     nameSetting = "QNH";
   }
-  else if ( nameSetting == "Wind" && SourceIsLarus) {
-    nameSetting = "ATTEN";
+  else if ( nameSetting == "STF" && SourceIsLarus) {
+    nameSetting = "TimeDifference";
+  }
+  else if ( nameSetting == "TimeDifference" && SourceIsLarus) {
+    nameSetting = "Mute";
   }
 }
 
 void changeValueOptionLeft () {
-  if ( nameSetting == "Bug" && !SourceIsLarus) {
-    nameSetting = "QNH";
+  if ( nameSetting == "QNH" && !SourceIsLarus) {
+    nameSetting = "STF";
   }
-  else if ( nameSetting == "QNH" && !SourceIsLarus) {
+  else if ( nameSetting == "STF") {
     nameSetting = "Wind";
+  }
+  else if ( nameSetting == "Wind") {
+    nameSetting = "Mute";
+  }
+  else if ( nameSetting == "Mute" && !SourceIsLarus) {
+    nameSetting = "ATTEN";
+  }
+  else if ( nameSetting == "Mute"  && SourceIsLarus) {
+    nameSetting = "TimeDifference";
+  }
+  else if ( nameSetting == "TimeDifference"  && SourceIsLarus) {
+    nameSetting = "STF";
   }
   else if ( nameSetting == "ATTEN"  && !SourceIsLarus) {
     nameSetting = "Bug";
   }
-  else if ( nameSetting == "ATTEN"  && SourceIsLarus) {
-    nameSetting = "Wind";
-  }
-  else if ( nameSetting == "Mute") {
-    nameSetting = "ATTEN";
-  }
-  else if ( nameSetting == "Wind") {
-    nameSetting = "Mute";
+  else if ( nameSetting == "Bug"  && !SourceIsLarus) {
+    nameSetting = "QNH";
   }
 }
 void changeLevelTwoMenu (bool changeLevelTwoValue) {
@@ -128,6 +148,18 @@ void changeLevelTwoMenu (bool changeLevelTwoValue) {
     // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
     Serial2.printf("%s%X\n", attStr.c_str(), checksum);
   }
+  
+  if (nameSetting == "TimeDifference") {
+    if (changeLevelTwoValue && TimeDifference < 12) {
+      TimeDifference = TimeDifference + 1;
+    }
+    else if (!changeLevelTwoValue && TimeDifference > -12) {
+      TimeDifference = TimeDifference - 1;
+    }
+    prefs.begin("settings", false);
+    prefs.putUInt("TimeDifference", TimeDifference);
+    prefs.end();
+  }
 }
 void changeLevelTwoMenuTurn (bool changeLevelTwoValue) {
   if (nameSetting == "Mute") {
@@ -160,10 +192,23 @@ void changeLevelTwoMenuTurn (bool changeLevelTwoValue) {
     prefs.begin("settings", false);
     prefs.putUInt("Wind", valueWindAsInt);
     prefs.end();
-    String windStr = ("$PFV,S,S," + String(valueWindAsInt) + "*");
-    int checksum = calculateChecksum(windStr);
+  }
+  if (nameSetting == "STF") {
+    if (changeLevelTwoMenuTurn && valueSTFAsInt == 0) {
+      valueSTFAsInt = 1;
+      valueSTFAsString = "OV";
+    }
+    else if (changeLevelTwoMenuTurn && valueSTFAsInt == 1) {
+      valueSTFAsInt = 0;
+      valueSTFAsString = "Flaps";
+    }
+    prefs.begin("settings", false);
+    prefs.putUInt("STF", valueSTFAsInt);
+    prefs.end();
+    String STFStr = ("$PFV,D,S," + String(valueSTFAsInt) + "*");
+    int checksum = calculateChecksum(STFStr);
     char buf[20];
     // dtostrf(floatvar, stringlength, digits_after_decimal, charbuf);
-    Serial2.printf("%s%X\n", windStr.c_str(), checksum);
+    Serial2.printf("%s%X\n", STFStr.c_str(), checksum);
   }
 }

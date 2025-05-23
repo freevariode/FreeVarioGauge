@@ -133,7 +133,13 @@ void fillArc(int x, int y, int start_angle, int seg_count, int rx, int ry, int w
 }
 
 void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpeed) {
-  stf_mode_state = digitalRead(STF_MODE);
+  if (SourceIsXCSoar == true) {
+    stf_mode_state = digitalRead(STF_MODE);
+  }
+  else   if (SourceIsLarus == true) {
+    stf_mode_state = 0;
+  }
+
   unsigned int color;
   String st;
 
@@ -174,7 +180,7 @@ void DrawArc(float inangle, float liftValue, double speedToFly, float trueAirSpe
   }
 
   //***************************************
-  //****  Start Funktioon to Draw Arc  ****
+  //****  Start Funktion to Draw Arc  ****
   //***************************************
   fillArc(160, 160, startAngle, segmentDraw, 160, 160, 30, color);
   B_alt = B;

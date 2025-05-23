@@ -44,6 +44,7 @@ ESP32Encoder Vario_Enc;
 #define InnerRadius 130
 #define xCenter 160
 #define yCenter 160
+#define BLUE 0x04df
 
 static TFT_eSPI tft = TFT_eSPI();
 TFT_eSprite nameOfField = TFT_eSprite(&tft);
@@ -66,7 +67,7 @@ SemaphoreHandle_t xTFTSemaphore;
 long NOT_SET = -1;
 long pushButtonPressTime = NOT_SET;
 
-const String SOFTWARE_VERSION = "  V2.1.1 - 2024";
+const String SOFTWARE_VERSION = "  V2.4.1 - 2025";
 
 const char *host = "FreeVario_Displayboard";
 const char *ssid = "FV_Displayboard";
@@ -80,21 +81,28 @@ String soundIP = "";
 String nameSetting = "QNH";
 String nameSpeed = "NA";
 String nameHight = "NA";
-String stf_mode;
+String stf_mode = "Vario";
 String valueQnhAsString = "1013";
 String valueBugAsString = "0";
 String valueMuteAsString = "NA";
 String valueWindAsString = "NA";
+String valueSTFAsString = "NA";
 String valueAttenAsString = "2";
 String valueGrsAsString = "0";
 String valueTasAsString = "0";
 String valueVaaAsString = "+0.0";
 String valueVanAsString = "+0.0";
 String valueHigAsString = "0";
+String valueFLAsString = "0";
 String valueHagAsString = "0";
 String valueAwsAsString = "0";
 String valueCwsAsString = "0";
 String valueMacAsString = "0.0";
+String voltage = "0.0";
+String UTC = "00:00";
+String UTCHour = "00";
+String UTCMinute = "00";
+String valueVoltageAsString = "0.0";
 
 extern uint16_t logoOV[];
 
@@ -145,15 +153,19 @@ int Wificount = 0;
 int valueMuteAsInt;
 int valueAttenAsInt;
 int valueWindAsInt;
+int valueSTFAsInt;
 int changeMode;
 int oldChangeMode;
 int offset = 0;
 int selectedMenu = MENU_SPEED_TYP;
 int requestDrawMenu = 1;
 int requestDrawMenuLevel = 0;
+int TimeDifference = 0;
 
 unsigned long lastTimeBoot = 0;
 unsigned long lastTimeReady = 0;
+unsigned long mcSend  = 0;
+unsigned long stayAlive = 0;
 
 // ************************************
 // ****  Initialize SPIFFS memory  ****

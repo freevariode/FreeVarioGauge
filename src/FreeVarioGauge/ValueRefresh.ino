@@ -14,6 +14,9 @@ void ValueRefresh(void *parameter) {
     else if (nameHight == "AGL") {
       valueHight = valueHagAsString;
     }
+    else if (nameHight == "FL") {
+      valueHight = valueFLAsString;
+    }
     if (nameSpeed == "GS") {
       valueSpeed = valueGrsAsString;
     }
@@ -41,7 +44,7 @@ void ValueRefresh(void *parameter) {
       }
 
       needleBlue.createSprite(20, 130);
-      needleBlue.drawWedgeLine(11, 0, 11, 130, 1, 10, TFT_BLUE);
+      needleBlue.drawWedgeLine(11, 0, 11, 130, 1, 10, BLUE);
       needleBlue.pushRotated(&background, valueAwdAsFloat, TFT_BLACK);
 
       if (valueCwdAsFloat != -1000) {
@@ -68,8 +71,6 @@ void ValueRefresh(void *parameter) {
           drawRectangle.drawRect(2, 2, 166, 37, TFT_RED);
           drawRectangle.drawRect(1, 1, 168, 39, TFT_RED);
           drawRectangle.drawRect(0, 0, 170, 41, TFT_RED);
-          drawRectangle.pushToSprite(&background, 55, 126 + offset, TFT_BLACK);
-          delay(50);
           drawRectangle.pushToSprite(&background, 55, 126 + offset, TFT_BLACK);
           drawRectangle.deleteSprite();
         }
@@ -165,7 +166,7 @@ void ValueRefresh(void *parameter) {
       }
       if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
       {
-        DrawText(nameOfField, TFT_BLUE, "small", "", valueAwsAsString, 0, 25, 40, 176, 40);
+        DrawText(nameOfField, BLUE, "small", "", valueAwsAsString, 0, 25, 40, 176, 40);
         xSemaphoreGive(xTFTSemaphore);
       }
     }
@@ -195,17 +196,33 @@ void ValueRefresh(void *parameter) {
     else {
       offset = -12;
     }
-    if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
-    {
-      if ((requestDrawMenuLevel == 1 ) && (requestDrawMenu == 2) || (requestDrawMenuLevel == 2 ) && (requestDrawMenu == 2)) {
-        DrawText(nameOfField, TFT_RED, "small", nameHight, valueHight + " m", 31, 25, 108, 82, 173 + offset); //+12
-      }
-      else {
-        DrawText(nameOfField, TFT_WHITE, "small", nameHight, valueHight + " m", 31, 25, 108, 82, 173 + offset);
-      }
-      xSemaphoreGive(xTFTSemaphore);
-    }
 
+    if (!SourceIsLarus || (SourceIsLarus && nameHight != "FL")) {
+      if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+      {
+
+        if ((requestDrawMenuLevel == 1 ) && (requestDrawMenu == 2) || (requestDrawMenuLevel == 2 ) && (requestDrawMenu == 2)) {
+          DrawText(nameOfField, TFT_RED, "small", nameHight, valueHight + " m", 31, 25, 108, 82, 173 + offset); //+12
+        }
+        else {
+          DrawText(nameOfField, TFT_WHITE, "small", nameHight, valueHight + " m", 31, 25, 108, 82, 173 + offset);
+        }
+        xSemaphoreGive(xTFTSemaphore);
+      }
+    }
+    else if (SourceIsLarus && nameHight == "FL") {
+      if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+      {
+
+        if ((requestDrawMenuLevel == 1 ) && (requestDrawMenu == 2) || (requestDrawMenuLevel == 2 ) && (requestDrawMenu == 2)) {
+          DrawText(nameOfField, TFT_RED, "small", nameHight, valueHight + "", 31, 25, 108, 82, 173 + offset); //+12
+        }
+        else {
+          DrawText(nameOfField, TFT_WHITE, "small", nameHight, valueHight + "", 31, 25, 108, 82, 173 + offset);
+        }
+        xSemaphoreGive(xTFTSemaphore);
+      }
+    }
 
     if ((valueWindAsInt == 1) && (valueAwdAsFloat != -1000)) {
       offset = 0;
@@ -222,6 +239,26 @@ void ValueRefresh(void *parameter) {
         }
         else {
           DrawText(nameOfField, TFT_WHITE, "small", "MC", valueSetting + " m/s", 24, 25, 114, 83, 210 + offset);
+        }
+        xSemaphoreGive(xTFTSemaphore);
+      }
+    }
+
+    else if (nameSetting == "Time") {
+      int TimeHour = UTCHour.toInt() + TimeDifference;
+      String Time = String(TimeHour) + ":" + UTCMinute;
+      String TimeType = "UTC";
+      if (TimeDifference != 0) {
+        TimeType = "Local";
+      }
+
+      if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+      {
+        if ((requestDrawMenuLevel == 1 ) && (requestDrawMenu == 3)) {
+          DrawText(nameOfField, TFT_RED, "small", TimeType, Time, 35, 25, 103, 83, 210 + offset);
+        }
+        else {
+          DrawText(nameOfField, TFT_WHITE, "small", TimeType, Time, 35, 25, 103, 83, 210 + offset);
         }
         xSemaphoreGive(xTFTSemaphore);
       }
@@ -297,11 +334,52 @@ void ValueRefresh(void *parameter) {
       }
     }
 
-    if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
-    {
-      DrawText(nameOfField, TFT_WHITE, "small", "Mode", stf_mode, 38, 25, 75, 105, 248);
-      xSemaphoreGive(xTFTSemaphore);
+    else if (nameSetting == "STF") {
+      if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+      {
+        valueSetting = valueSTFAsString;
+        if ((requestDrawMenuLevel == 2 ) && (requestDrawMenu == 3) || (requestDrawMenuLevel == 3 ) && (requestDrawMenu == 3)) {
+          DrawText(nameOfField, TFT_RED, "small", "STF", valueSetting, 39, 25, 99, 83, 210 + offset);
+        }
+        else {
+          DrawText(nameOfField, TFT_WHITE, "small", "STF", valueSetting, 39, 25, 99, 83, 210 + offset);
+        }
+        xSemaphoreGive(xTFTSemaphore);
+      }
     }
+
+    else if (nameSetting == "TimeDifference") {
+      if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+      {
+        valueSetting = String(TimeDifference);
+        if (TimeDifference >= 0) {
+          valueSetting = "+" + String(TimeDifference);
+        }
+        if ((requestDrawMenuLevel == 2 ) && (requestDrawMenu == 3) || (requestDrawMenuLevel == 3 ) && (requestDrawMenu == 3)) {
+          DrawText(nameOfField, TFT_RED, "small", "Diff.", valueSetting, 39, 25, 99, 83, 210 + offset);
+        }
+        else {
+          DrawText(nameOfField, TFT_WHITE, "small", "Diff.", valueSetting, 39, 25, 99, 83, 210 + offset);
+        }
+        xSemaphoreGive(xTFTSemaphore);
+      }
+    }
+
+    if (!SourceIsLarus) {
+      if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+      {
+        DrawText(nameOfField, TFT_WHITE, "small", "Mode", stf_mode, 38, 25, 75, 105, 248);
+        xSemaphoreGive(xTFTSemaphore);
+      }
+    }
+    else {
+      if ( xSemaphoreTake( xTFTSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+      {
+        DrawText(nameOfField, TFT_WHITE, "small", "Bat.", valueVoltageAsString + " V", 25, 45, 90, 105, 248);
+        xSemaphoreGive(xTFTSemaphore);
+      }
+    }
+
     vTaskDelay(15);
     background.pushSprite(0, 0);
   }

@@ -11,7 +11,9 @@ void SerialScan () {
       Data = Serial2.read();
       if (Data == '$') {
         while (Data != 10) {
-          DataString += Data;
+          if (Data >= 32 && Data <= 126) {
+            DataString += Data;
+          }
           Data = Serial2.read();
         }
         startSound = true;
@@ -20,12 +22,18 @@ void SerialScan () {
       else {
         if ((!SourceIsXCSoar && !SourceIsLarus) && (baudDetect == 0) && (millis() - ChangeBaud <= 5000)) {
           Serial2.end();
+          Serial.println("Looking for XCSoar");
+          Serial.println("baud rate is set to 115200");
           Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
+          delay(500);
           baudDetect = 1;
         }
         else if ((!SourceIsXCSoar && !SourceIsLarus) && (baudDetect == 1) &&  (millis() - ChangeBaud > 5000) && (millis() - ChangeBaud <= 10000)) {
           Serial2.end();
+          Serial.println("Looking for Larus");
+          Serial.println("baud rate is set to 38400");
           Serial2.begin(38400, SERIAL_8N1, RXD2, TXD2);
+          delay(500);
           baudDetect = 0;
         }
         else if ((!SourceIsXCSoar && !SourceIsLarus) && (millis() - ChangeBaud > 10000)) {
@@ -36,11 +44,14 @@ void SerialScan () {
       //****************************
       //****  XCSoar is source  ****
       //****************************
-
-      if (DataString.startsWith("$PFV")) {
+      if ((DataString.startsWith("$PFV,VAR")) || (DataString.startsWith("$PFV,VAN"))) {
         if (!SourceIsXCSoar) {
           SourceIsXCSoar = true;
+          SourceIsLarus = false;
         }
+      }
+
+      if (DataString.startsWith("$PFV") && SourceIsXCSoar == true) {
         //Serial2.println(DataString);
         int pos = DataString.indexOf(',');
         DataString.remove(0, pos + 1);
@@ -54,6 +65,7 @@ void SerialScan () {
         //**************************************
         if (variable == "VAR") {
           var = wert.toFloat();
+          varAvailable = true;
         }
 
         //***********************************************
@@ -82,7 +94,7 @@ void SerialScan () {
         //************************************
         if (variable == "STF") {
           stfValue = wert.toFloat();
-          if (digitalRead(STF_MODE) == 1 && tas > 10) {
+          if (tas > 10) {
             int FF = (valueAttenAsInt * 10) + 1;
             stf = filter(stfValue, FF);
           }
@@ -105,16 +117,23 @@ void SerialScan () {
           valueAttenAsInt = wert.toInt();
         }
 
+        //*******************************
+        //****  analyse STF-Mode  ****
+        //*******************************
+        else if (variable == "SMO") {
+          valueSTFAsInt = wert.toInt();
+        }
+
         sf = (tas - stf) / 10;
       }
 
       //***************************
       //****  Larus is source  ****
       //***************************
-
       if (DataString.startsWith("$PLAR")) {
-        if (!SourceIsLarus) {
+        if (!SourceIsLarus == true) {
           SourceIsLarus = true;
+          SourceIsXCSoar = false;
         }
         if (DataString.startsWith("$PLARV")) {
           int pos0 = DataString.indexOf('*');
@@ -132,6 +151,7 @@ void SerialScan () {
             int pos1 = dataToCheck.indexOf(',');                   //findet den Ort des ersten ,
             String VAR = dataToCheck.substring(0, pos1);           //erfasst das aktuelle Steigen
             var = VAR.toFloat();                                   //wandelt das aktuelle Steigen in float
+            varAvailable = true;
 
             int pos2 = dataToCheck.indexOf(',', pos1 + 1);         //findet den Ort des zweiten ,
             int pos3 = dataToCheck.indexOf(',', pos2 + 1);         //findet den Ort des dritten ,

@@ -60,22 +60,26 @@ void showBootScreen(String versionString) {
             dataString += serialString;
             serialString = Serial2.read();
           }
-          Serial.print("dataString: ");
-          Serial.println(dataString);
         } else {
           if ((!SourceIsXCSoar && !SourceIsLarus) && (baudDetect == 0) && (millis() - ChangeBaud <= 5000)) {
             Serial2.end();
+            Serial.println("Looking for XCSoar");
+            Serial.println("baud rate is set to 115200");
             Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
+            delay(500);
             baudDetect = 1;
           } else if ((!SourceIsXCSoar && !SourceIsLarus) && (baudDetect == 1) && (millis() - ChangeBaud > 5000) && (millis() - ChangeBaud <= 10000)) {
             Serial2.end();
+            Serial.println("Looking for Larus");
+            Serial.println("baud rate is set to 38400");
             Serial2.begin(38400, SERIAL_8N1, RXD2, TXD2);
+            delay(500);
             baudDetect = 0;
           } else if ((!SourceIsXCSoar && !SourceIsLarus) && (millis() - ChangeBaud > 10000)) {
             ChangeBaud = millis();
           }
         }
-        if ((dataString.startsWith("$PFV")) || (dataString.startsWith("$PLAR"))) {
+        if ((dataString.startsWith("$PFV,VAR")) || (dataString.startsWith("$PFV,VAN")) || (dataString.startsWith("$PLAR"))) {
           serial2IsReady = 1;
         }
         dataString = "";
@@ -97,9 +101,9 @@ void drawLogo() {
     drawBmp(bmpFS, 40, 55);
     bmpFS.close();
   } else {
-    #ifdef DEBUG
+#ifdef DEBUG
     Serial.println("Logo not found. Using deprecated LogoOV2. Update of SPIFFS required.");
-    #endif 
+#endif
     bool swap = tft.getSwapBytes();
     tft.setSwapBytes(true);
     tft.pushImage(40, 55, 194, 156, logoOV);
