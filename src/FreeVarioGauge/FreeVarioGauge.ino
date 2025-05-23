@@ -67,7 +67,7 @@ SemaphoreHandle_t xTFTSemaphore;
 long NOT_SET = -1;
 long pushButtonPressTime = NOT_SET;
 
-const String SOFTWARE_VERSION = "  V2.4.1 - 2025";
+const String SOFTWARE_VERSION = "  V2.4.2 - 2025";
 
 const char *host = "FreeVario_Displayboard";
 const char *ssid = "FV_Displayboard";
