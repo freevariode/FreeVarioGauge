@@ -5,39 +5,39 @@
 
 ### New in V2.4.2:
 
-– files from the data folder can be uploaded OTA via the web interface
+- files from the data folder can be uploaded OTA via the web interface
  </br>
  
 ### New in V2.4.1:
 
-– Bug fix for wind display when FreeVario is only connected to Larus
+- Bug fix for wind display when FreeVario is only connected to Larus
  </br>
  
 ### New in V2.4:
 
-– Optimization of the menu for direct connection to the Larus without OpenVario
+- Optimization of the menu for direct connection to the Larus without OpenVario
  </br>
  
 ### New in V2.3:
 
-– Improvement of device detection (XCSoar or Larus)
+- Improvement of device detection (XCSoar or Larus)
 
-– improved connection to Larus
+- improved connection to Larus
 
-– optimized data transfer using the BT-RS232 bridge from FreeVario
+- optimized data transfer using the BT-RS232 bridge from FreeVario
  </br>
  
 ### New in V2.2:
 
-– Improved wind arrow color
+- Improved wind arrow color
 
-– STF bug fix
+- STF bug fix
 
-– in the menu, instead of using the slide switch on the board, set whether XCSoar or flap switch should switch between STF and Vario in automatic mode
+- in the menu, instead of using the slide switch on the board, set whether XCSoar or flap switch should switch between STF and Vario in automatic mode
 
-– Improvements to variosound
+- Improvements to variosound
 
-– Improvement when setting McCready
+- Improvement when setting McCready
  </br>
 
 ### New in V2.1:
