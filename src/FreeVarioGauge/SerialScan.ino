@@ -540,14 +540,14 @@ void SerialScan (void *p) {
       if (oldstf_mode_state != stf_mode_state || !WasSend) {
         if (digitalRead(STF_MODE) == LOW && digitalRead(STF_AUTO) == LOW) {
           Serial2.println("$POV,C,VAR*4F");  //Vario-Mode
-          Serial2.println("$PFV,F,C*61");    //Vario-Mode
+          Serial2.println("$PFV,F,C*45");    //Vario-Mode
           WasSend = true;
           stf_mode = "Vario";
           oldstf_mode_state = digitalRead(STF_MODE);
         }
         else if (digitalRead(STF_MODE) == HIGH && digitalRead(STF_AUTO) == LOW) {
           Serial2.println("$POV,C,STF*4B");  //STF-Mode
-          Serial2.println("$PFV,F,S*71");    //STF-Mode
+          Serial2.println("$PFV,F,S*55");    //STF-Mode
           WasSend = true;
           stf_mode = "STF";
           oldstf_mode_state = digitalRead(STF_MODE);
