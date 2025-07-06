@@ -542,6 +542,7 @@ void SerialScan (void *p) {
           Serial2.println("$POV,C,VAR*4F");  //Vario-Mode
           Serial2.println("$PFV,F,C*45");    //Vario-Mode
           WasSend = true;
+          AutoWasSend = false;
           stf_mode = "Vario";
           oldstf_mode_state = digitalRead(STF_MODE);
         }
@@ -549,7 +550,14 @@ void SerialScan (void *p) {
           Serial2.println("$POV,C,STF*4B");  //STF-Mode
           Serial2.println("$PFV,F,S*55");    //STF-Mode
           WasSend = true;
+          AutoWasSend = false;
           stf_mode = "STF";
+          oldstf_mode_state = digitalRead(STF_MODE);
+        }
+        else if (digitalRead(STF_AUTO) == HIGH && AutoWasSend == false) {
+          Serial2.println("$PFV,F,A*47");    //Auto-Mode
+          WasSend = true;
+          AutoWasSend = true;
           oldstf_mode_state = digitalRead(STF_MODE);
         }
       }

@@ -137,6 +137,7 @@ bool subMenuTriggered = false;
 bool subMenuLevelTwoTriggered = false;
 bool requestMenuPaint = false;
 bool WasSend = false;
+bool AutoWasSend = false;
 bool SourceIsXCSoar = false;
 bool SourceIsLarus = false;
 
