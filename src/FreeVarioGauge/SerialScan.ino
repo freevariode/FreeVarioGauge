@@ -543,7 +543,6 @@ void SerialScan (void *p) {
           Serial2.println("$PFV,F,C*45");    //Vario-Mode
           WasSend = true;
           AutoWasSend = false;
-          stf_mode = "Vario";
           oldstf_mode_state = digitalRead(STF_MODE);
         }
         else if (digitalRead(STF_MODE) == HIGH && digitalRead(STF_AUTO) == LOW) {
@@ -551,15 +550,19 @@ void SerialScan (void *p) {
           Serial2.println("$PFV,F,S*55");    //STF-Mode
           WasSend = true;
           AutoWasSend = false;
-          stf_mode = "STF";
           oldstf_mode_state = digitalRead(STF_MODE);
         }
-        else if (digitalRead(STF_AUTO) == HIGH && AutoWasSend == false) {
-          Serial2.println("$PFV,F,A*47");    //Auto-Mode
-          WasSend = true;
-          AutoWasSend = true;
-          oldstf_mode_state = digitalRead(STF_MODE);
-        }
+      }
+      if (digitalRead(STF_AUTO) == HIGH && !AutoWasSend) {
+        Serial2.println("$PFV,F,A*47");    //Auto-Mode
+        AutoWasSend = true;
+        WasSend = false;
+      }
+      if (digitalRead(STF_MODE) == HIGH) {
+        stf_mode = "STF";
+      }
+      else if (digitalRead(STF_MODE) == LOW) {
+        stf_mode = "Vario";
       }
     }
     else if (SourceIsLarus == true) {

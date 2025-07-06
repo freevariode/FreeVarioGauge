@@ -6,6 +6,7 @@ void setup() {
   Serial.begin(115200, SERIAL_8N1);
   Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
   pinMode(STF_MODE, OUTPUT);
+  pinMode(STF_AUTO, OUTPUT);
   //pinMode(Free, INPUT_PULLUP);
   pinMode(PTT, INPUT_PULLUP);
   pinMode(Varioschalter, INPUT_PULLUP);

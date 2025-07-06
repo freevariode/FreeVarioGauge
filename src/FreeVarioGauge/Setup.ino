@@ -22,6 +22,8 @@ void setup() {
   Vario_Enc.attachHalfQuad(23, 32);
   Vario_Enc.setCount(16380);
   pinMode(VE_PB, INPUT_PULLUP);
+  pinMode(STF_MODE, INPUT_PULLUP);
+  pinMode(STF_AUTO, INPUT_PULLUP);
   Serial.begin(115200, SERIAL_8N1);
   Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
   SPIFFSstart();
@@ -61,7 +63,7 @@ void setup() {
   else if (valueWindAsInt == 1) {
     valueWindAsString = "ON";
   }
-  
+
   if (valueSTFAsInt == 1) {
     valueSTFAsString = "OV";
   }
