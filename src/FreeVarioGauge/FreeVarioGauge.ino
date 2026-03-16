@@ -34,12 +34,12 @@ Preferences prefs;
 
 ESP32Encoder Vario_Enc;
 
-#define RXD2 16
-#define TXD2 17
-#define VE_PB 27
+#define RXD2 16                // PIN 27
+#define TXD2 17                // PIN 28
+#define VE_PB 27               // PIN 12
 #define DEG2RAD 0.0174532925
-#define STF_MODE 13
-#define STF_AUTO 33
+#define STF_MODE 13            // PIN 16
+#define STF_AUTO 33            // PIN 9
 #define OuterRadius 160
 #define InnerRadius 130
 #define xCenter 160

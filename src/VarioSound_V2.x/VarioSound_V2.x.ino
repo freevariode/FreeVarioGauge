@@ -14,11 +14,11 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#define STF_MODE 13
-#define STF_AUTO 33
-//#define Free 14                      // Automatic mode through flaps or XCSoar; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
-#define PTT 27                        // VarioSound off by pressing the radio button; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin   
-#define SINFAKT 127.0             
+#define STF_MODE 13                   // PIN 16
+#define STF_AUTO 33                   // PIN 9
+//#define Free 14                     // PIN 13, Automatic mode through flaps or XCSoar; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
+#define PTT 27                        // PIN 12, VarioSound off by pressing the radio button; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin   
+#define SINFAKT 127.0
 
 #include "soc/rtc_cntl_reg.h"
 #include "soc/sens_reg.h"
@@ -37,9 +37,9 @@ WebServer server(80);
 Print &cout = Serial;
 TaskHandle_t SoundTask;
 
-const int Varioschalter = 15;         // Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
-const int STFSchalter = 5;            // Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
-const int STFAuto = 19;               // Flap connection; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin´
+const int Varioschalter = 15;         // PIN 23, Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
+const int STFSchalter = 5;            // PIN 29, Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
+const int STFAuto = 19;               // PIN 31, Flap connection; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin´
 
 const String SOFTWARE_VERSION = "  V2.4.4 - 2025";
 
@@ -79,7 +79,7 @@ bool SourceIsXCSoar = false;
 bool SourceIsLarus = false;
 bool initDone = false;
 bool startSound = false;
-bool varAvailable = false; 
+bool varAvailable = false;
 
 float sf = 0;
 float stfValue = 0;                        // Speed to Fly value
