@@ -34,8 +34,8 @@ void setup() {
   server.serveStatic("/serverIndex", SPIFFS, "/display-update.html");
   server.serveStatic("/", SPIFFS, "/display-login.html");
 
-  xTaskCreate(SerialScan, "Serial Scan", 3000, NULL, 30, &SerialScanTask);
-  xTaskCreate(ValueRefresh, "Value Refresh", 4500, NULL, 200, &TaskValueRefresh);
+  xTaskCreate(SerialScan, "Serial Scan", 3000, NULL, 2, &SerialScanTask);
+  xTaskCreate(ValueRefresh, "Value Refresh", 4500, NULL, 24, &TaskValueRefresh);
   //xTaskCreate(printWatermark, "Print Watermark", 2048, NULL, 1, NULL);     //Task zum Messen des benötigten Stacks der anderen Tasks
 
   prefs.begin("settings", false);
