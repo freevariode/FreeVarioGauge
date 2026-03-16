@@ -16,7 +16,7 @@
 
 #define STF_MODE 13                   // PIN 16
 #define STF_AUTO 33                   // PIN 9
-//#define Free 14                     // PIN 13, Automatic mode through flaps or XCSoar; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin
+//#define Free 14                     // PIN 13
 #define PTT 27                        // PIN 12, VarioSound off by pressing the radio button; Connect button to GND, connect 10 kOhm pull-up resistor between 3.3V and pin   
 #define SINFAKT 127.0
 
